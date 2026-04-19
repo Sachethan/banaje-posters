@@ -12,296 +12,148 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        dark: {
-                            900: '#0f172a', 
-                            800: '#1e293b', 
-                            700: '#334155', 
-                        }
-                    }
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { dark: { 900: '#0f172a', 800: '#1e293b', 700: '#334155' } }
                 }
             }
         }
     </script>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
+/* --- Main Studio CSS --- */
+body { 
+    font-family: 'Inter', sans-serif; 
+    -webkit-font-smoothing: antialiased; 
+}
 
-        .loader-fade-out {
-            opacity: 0;
-            transition: opacity 0.4s ease-out;
-            pointer-events: none;
-        }
+/* Custom Scrollbar for the Gallery Grid */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #0f172a; }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
 
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0f172a; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #334155; 
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #475569; 
-        }
+.spinner { 
+    width: 40px; height: 40px; 
+    border: 3px solid rgba(99, 102, 241, 0.3); 
+    border-radius: 50%; border-top-color: #6366f1; 
+    animation: spin 0.8s ease-in-out infinite; 
+}
 
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(99, 102, 241, 0.3);
-            border-radius: 50%;
-            border-top-color: #6366f1; 
-            animation: spin 0.8s ease-in-out infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-        .template-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .template-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
-            border-color: #6366f1; 
-        }
+.template-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.template-card:hover { transform: translateY(-4px); border-color: #6366f1; }
 
-        .text-gradient {
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-image: linear-gradient(to right, #818cf8, #c084fc, #22d3ee);
-        }
-    </style>
+.text-gradient { 
+    background-clip: text; 
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+    background-image: linear-gradient(to right, #818cf8, #c084fc, #22d3ee); 
+}
+
+footer { text-align: center; padding: 40px; color: #666; }
+
+/* Hiding the Iframe Scrollbar via Clipping */
+#iframe-container {
+    overflow: hidden; /* This acts as a mask */
+    position: absolute;
+    inset: 0;
+    z-index: 40;
+}
+
+#viewer {
+    /* Push the scrollbar 20px off-screen to the right */
+    width: calc(100% + 20px); 
+    height: 100%;
+    border: none;
+}
+</style>
 </head>
-<body class="bg-dark-900 text-slate-200 flex flex-col h-screen overflow-hidden selection:bg-indigo-500 selection:text-white">
+<body class="bg-dark-900 text-slate-200 flex flex-col h-screen overflow-hidden">
 
-    <header class="h-16 flex-shrink-0 z-30 relative border-b border-slate-700/50 bg-dark-900/90 backdrop-blur-md shadow-lg">
-        <div class="absolute inset-0 bg-gradient-to-r from-indigo-900/20 via-purple-900/20 to-slate-900/20 pointer-events-none"></div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between relative">
+    <header class="h-16 flex-shrink-0 z-30 relative border-b border-slate-700/50 bg-dark-900/90 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 h-full flex items-center justify-between relative">
             <div class="flex items-center gap-4">
-                <div id="branding-container" class="flex flex-col justify-center">
-                    <h1 class="text-xl font-bold tracking-tight text-white">
-                        Bhajane <span class="text-gradient">Templates</span>
-                    </h1>
-                    <p class="text-[10px] text-slate-500 uppercase tracking-widest font-semibold">Salian Hub Studio</p>
+                <div id="branding-container">
+                    <h1 class="text-sm font-bold text-white">Bhajane <span class="text-gradient">Templates</span></h1>
                 </div>
-
-                <button id="back-to-gallery-btn" class="hidden items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium rounded-lg border border-slate-700 transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
-                    Back
-                </button>
             </div>
-            
-            <div class="flex items-center gap-3">
-                <nav id="editor-nav" class="hidden text-xs font-medium bg-slate-800/50 px-3 py-1.5 rounded-full border border-slate-700 whitespace-nowrap overflow-hidden">
-                    <span class="text-slate-400"></span>
-                    <span id="template-breadcrumb" class="text-indigo-400 ml-1 font-semibold tracking-wide inline-block align-bottom truncate max-w-[90px]">Untitled</span>
-                </nav>
-
-                <button id="logout-btn" class="flex items-center gap-2 px-3 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-semibold rounded-xl border border-red-500/20 transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                    Logout
-                </button>
+            <div id="editor-nav" class="hidden text-xs bg-slate-800/50 px-3 py-1.5 rounded-full border border-slate-700">
+                <span id="template-breadcrumb" class="text-indigo-400 font-semibold ml-1 tracking-wide inline-block align-bottom truncate max-w-[50px]">Untitled</span>
             </div>
+           <button id="back-to-gallery-btn" class="hidden m-4 items-center gap-2 px-3 py-1.5 bg-slate-800 text-slate-300 text-sm rounded-lg border border-slate-700">
+           Back
+           </button>
+                   <div class="text-xs">
+        <span class="text-indigo-400 font-semibold ml-1">SSC.</span>
         </div>
+        </div>
+
     </header>
 
-    <main class="flex-grow relative h-full overflow-hidden bg-gradient-to-br from-dark-900 to-slate-900">
-        
-        <div id="template-selector" class="h-full overflow-y-auto scroll-smooth">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-24">
-                <div class="mb-10 flex flex-col md:flex-row justify-between items-center gap-4 bg-dark-800/50 p-2 rounded-2xl border border-slate-700/50 backdrop-blur-sm sticky top-0 z-40 shadow-xl">
-                    
-                    <div class="relative w-full md:w-96 group">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-slate-500 group-focus-within:text-indigo-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </div>
-                        <input type="text" id="search-input" placeholder="Search templates..."
-                            class="w-full pl-10 pr-10 py-3 bg-dark-900 border border-transparent focus:border-indigo-500 rounded-xl focus:ring-2 focus:ring-indigo-500/20 text-sm text-slate-200 placeholder-slate-500 transition-all outline-none">
-                    </div>
-
-                    <div class="flex space-x-1 bg-dark-900 p-1.5 rounded-xl w-full md:w-auto overflow-x-auto border border-slate-800">
-                        <button data-category="all" class="tab-button flex-1 md:flex-none px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200">All</button>
-                        <button data-category="devotional" class="tab-button flex-1 md:flex-none px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200">Bhajane</button>
-                        <button data-category="favorite" class="tab-button flex-1 md:flex-none px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200">Favorites</button>
-                    </div>
-                </div>
-
-                <div id="template-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
-
-                <div id="templateLoader" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 opacity-100 transition-opacity duration-300">
-                    <div class="bg-dark-800 rounded-2xl border border-slate-700 p-5 space-y-4 shadow-lg">
-                        <div class="h-44 bg-slate-700/50 rounded-xl animate-pulse"></div>
-                    </div>
-                </div>
+    <main class="flex-grow relative overflow-hidden bg-gradient-to-br from-dark-900 to-slate-900">
+        <div id="template-selector" class="h-full overflow-y-auto">
+            <div class="max-w-7xl mx-auto px-4 py-10">
+                <div id="template-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"></div>
             </div>
         </div>
 
         <div id="iframe-container" class="hidden absolute inset-0 bg-dark-900 z-40">
-            <div id="loading-overlay" class="absolute inset-0 bg-dark-900/95 backdrop-blur-sm flex items-center justify-center z-50 transition-opacity duration-300">
+            <div id="loading-overlay" class="absolute inset-0 bg-dark-900/95 flex items-center justify-center z-50">
                 <div class="flex flex-col items-center">
-                    <div class="spinner mb-6"></div>
-                    <p class="text-lg font-medium text-slate-300 animate-pulse tracking-wide">Loading Studio...</p>
+                    <div class="spinner mb-4"></div>
+                    <p class="text-slate-300 animate-pulse">Opening Editor...</p>
                 </div>
             </div>
-            <iframe id="viewer" src="about:blank" title="Editor" class="w-full h-full border-0"></iframe>
+            <iframe id="viewer" src="about:blank" class="w-full h-full border-0"></iframe>
         </div>
     </main>
+<footer>&copy; 2026 Sachethan Salian Creation</footer>
+    <script>
+        const templates = [
+            { id: '1', title: 'ಅನ್ನಪೂರ್ಣ ಆಶೀರ್ವಾದ', previewImage: 'annapoorna/image/preview.jpg', url: 'annapoorna/annapoorna1.html' },
+            { id: '2', title: 'ಶ್ರೀ ಶರಭೇಶ್ವರ ಭಜನೆ', previewImage: 'sharabeswara/image/preview.png', url: 'sharabeswara/sharabeswara.html' }
+        ];
 
-    <div id="confirmation-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm overflow-y-auto h-full w-full z-50 hidden flex items-center justify-center">
-        <div class="bg-dark-800 border border-slate-700 rounded-2xl shadow-2xl p-8 w-96 max-w-full m-4 transform transition-all scale-100">
-            <div class="text-center">
-                <h3 class="text-xl font-bold text-white">Leave Editor?</h3>
-                <p class="text-slate-400 mt-3">Any unsaved changes will be lost.</p>
-                <div class="mt-8 flex gap-3 justify-center">
-                    <button id="cancel-btn" class="px-5 py-2.5 bg-slate-700 text-slate-200 text-sm font-medium rounded-xl">Stay</button>
-                    <button id="confirm-back-btn" class="px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-xl">Leave</button>
-                </div>
-            </div>
-        </div>
-    </div>
+        const grid = document.getElementById('template-grid');
+        const viewer = document.getElementById('viewer');
+        const selector = document.getElementById('template-selector');
+        const container = document.getElementById('iframe-container');
+        const loader = document.getElementById('loading-overlay');
+        const backBtn = document.getElementById('back-to-gallery-btn');
+        const nav = document.getElementById('editor-nav');
+        const breadcrumb = document.getElementById('template-breadcrumb');
 
- <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
-
-        const isLoggedIn = localStorage.getItem('isLoggedIn');
-        if (isLoggedIn !== 'true') {
-            localStorage.setItem("redirectUrl", window.location.href);
-            window.location.href = 'login/login.html';
-            throw new Error("Unauthorized access");
+        function render() {
+            templates.forEach(t => {
+                const card = document.createElement('div');
+                card.className = 'template-card bg-dark-800 border border-slate-700 rounded-xl overflow-hidden cursor-pointer p-4';
+                card.innerHTML = `
+                    <img src="${t.previewImage}" class="w-full h-40 object-cover rounded-lg mb-4" onerror="this.src='https://placehold.co/400x225/1e293b/6366f1?text=Template'">
+                    <h3 class="text-white font-bold mb-3">${t.title}</h3>
+                    <button class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm font-semibold transition">Open Editor</button>
+                `;
+                card.onclick = () => {
+                    loader.classList.remove('hidden');
+                    selector.classList.add('hidden');
+                    container.classList.remove('hidden');
+                    backBtn.classList.remove('hidden');
+                    nav.classList.remove('hidden');
+                    breadcrumb.textContent = t.title;
+                    viewer.src = t.url;
+                };
+                grid.appendChild(card);
+            });
         }
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCZejpQv-Ru-OlzWsjzFF_37e8b8DIC3u8",
-            authDomain: "posterdata-113da.firebaseapp.com",
-            projectId: "posterdata-113da",
-            storageBucket: "posterdata-113da.appspot.com",
-            messagingSenderId: "702186025024",
-            appId: "1:702186025024:web:488eec752f7f6c382cefa5",
-            measurementId: "G-YQHKJTNHKG"
+        backBtn.onclick = () => {
+            viewer.src = 'about:blank';
+            selector.classList.remove('hidden');
+            container.classList.add('hidden');
+            backBtn.classList.add('hidden');
+            nav.classList.add('hidden');
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        document.addEventListener('DOMContentLoaded', () => {
-
-            const templates = [
-                { id: 'poster-anna-poorna', title: 'ಅನ್ನಪೂರ್ಣ ಆಶೀರ್ವಾದ - Poster', description: 'Annapoorna Seva Samithi editor.', previewImage: 'annapoorna/image/preview.jpg', url: 'annapoorna/annapoorna1.html', category: 'devotional', isFavorite: false },
-                { id: 'poster-sarapady', title: 'ಶ್ರೀ ಶರಭೇಶ್ವರ ಭಜನೆ - Poster', description: 'Sarapady event editor.', previewImage: 'sharabeswara/image/preview.png', url: 'sharabeswara/sharabeswara.html', category: 'devotional', isFavorite: false }
-            ];
-
-            const templateSelector = document.getElementById('template-selector');
-            const iframeContainer = document.getElementById('iframe-container');
-            const viewerIframe = document.getElementById('viewer');
-            const loadingOverlay = document.getElementById('loading-overlay');
-            const editorNav = document.getElementById('editor-nav');
-            const templateBreadcrumb = document.getElementById('template-breadcrumb');
-            const confirmationModal = document.getElementById('confirmation-modal');
-            const confirmBackBtn = document.getElementById('confirm-back-btn');
-            const cancelBtn = document.getElementById('cancel-btn');
-            const templateGrid = document.getElementById('template-grid');
-            const templateLoader = document.getElementById('templateLoader');
-            const searchInput = document.getElementById('search-input');
-            const tabButtons = document.querySelectorAll('.tab-button');
-            const logoutBtn = document.getElementById('logout-btn');
-            const backToGalleryBtn = document.getElementById('back-to-gallery-btn');
-            const brandingContainer = document.getElementById('branding-container');
-
-            const blankPageUrl = 'about:blank';
-            let currentSearchQuery = '';
-            let currentCategory = 'all';
-
-            backToGalleryBtn.onclick = () => confirmationModal.classList.remove('hidden');
-            logoutBtn.onclick = () => {
-                localStorage.clear();
-                window.location.href = 'login/login.html';
-            };
-
-            function showEditor(url, title) {
-                loadingOverlay.classList.remove('hidden');
-                templateSelector.classList.add('hidden');
-                iframeContainer.classList.remove('hidden');
-                backToGalleryBtn.classList.remove('hidden');
-                backToGalleryBtn.classList.add('flex');
-                brandingContainer.classList.add('hidden');
-                editorNav.classList.remove('hidden');
-                templateBreadcrumb.textContent = title;
-                templateBreadcrumb.title = title; // Hover tooltip
-                viewerIframe.src = url;
-            }
-
-            function showTemplateSelector() {
-                viewerIframe.src = blankPageUrl;
-                templateSelector.classList.remove('hidden');
-                iframeContainer.classList.add('hidden');
-                backToGalleryBtn.classList.add('hidden');
-                brandingContainer.classList.remove('hidden');
-                editorNav.classList.add('hidden');
-                confirmationModal.classList.add('hidden');
-            }
-
-            function loadFavorites() {
-                const favoriteTemplateIds = JSON.parse(localStorage.getItem('favoriteTemplates') || '[]');
-                templates.forEach(t => t.isFavorite = favoriteTemplateIds.includes(t.id));
-            }
-
-            function renderTemplates(templatesToRender) {
-                templateGrid.innerHTML = '';
-                templateLoader.classList.add('hidden');
-                templatesToRender.forEach(template => {
-                    const card = document.createElement('div');
-                    card.className = 'template-card bg-dark-800 border border-slate-700/50 rounded-2xl overflow-hidden flex flex-col h-full shadow-lg';
-                    card.innerHTML = `
-                      <div class="relative aspect-[16/9] bg-slate-900 overflow-hidden">
-                        <img src="${template.previewImage}" class="w-full h-full object-cover">
-                      </div>
-                      <div class="p-6 flex flex-col flex-grow">
-                        <h3 class="text-lg font-bold text-white mb-1">${template.title}</h3>
-                        <button class="mt-auto py-2.5 px-4 bg-indigo-600 text-white text-sm font-semibold rounded-xl" data-url="${template.url}" data-title="${template.title}">Open Editor</button>
-                      </div>
-                    `;
-                    templateGrid.appendChild(card);
-                });
-            }
-
-            function filterAndRenderTemplates() {
-                const filtered = templates.filter(t => t.title.toLowerCase().includes(currentSearchQuery.toLowerCase()));
-                renderTemplates(filtered);
-            }
-
-            viewerIframe.addEventListener('load', () => loadingOverlay.classList.add('hidden'));
-            templateGrid.addEventListener('click', (e) => {
-                const openBtn = e.target.closest('button[data-url]');
-                if (openBtn) showEditor(openBtn.dataset.url, openBtn.dataset.title);
-            });
-
-            confirmBackBtn.addEventListener('click', showTemplateSelector);
-            cancelBtn.addEventListener('click', () => confirmationModal.classList.add('hidden'));
-            searchInput.addEventListener('input', (e) => {
-                currentSearchQuery = e.target.value;
-                filterAndRenderTemplates();
-            });
-
-            loadFavorites();
-            filterAndRenderTemplates();
-        });
+        viewer.onload = () => loader.classList.add('hidden');
+        render();
     </script>
 </body>
 </html>

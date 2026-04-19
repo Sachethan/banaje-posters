@@ -18,7 +18,8 @@
   gtag('config', 'G-YQHKJTNHKG');
 </script>
   
-  
+    <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -76,34 +77,32 @@
   <div class="absolute font-bold bg-white text-red-800 p-1 pt-2 top-[30%] left-[0] w-full z-99 flex justify-center items-center">
 <h1 style="animation: blink 1s infinite;">Under maintenance</h1>
 </div> -->
-    <!-- Controls -->
-   <div class="w-full max-w-md">
+
+<!-- Controls -->
+   <div class="w-full mt-0 max-w-md">
         <!-- Controls Container -->
         <div class="bg-slate-800/80 backdrop-blur-sm p-3 rounded-xl shadow-lg flex justify-center items-center gap-4 border border-slate-700">
             <!-- Secondary Button: "Change Font" -->
-            <button disabled id="font-modal-button" title="Disabled by admin" class="flex items-center gap-2 px-2 py-2 pt-3 text-sm font-medium text-slate-200 bg-slate-700 rounded-lg hover:bg-slate-600 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800 focus-visible:ring-sky-400">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-80"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
-                Change Font
+            <button id="font-modal-button" class="flex items-center gap-2 px-5 py-2 pt-2 text-[20px] font-medium text-slate-200 bg-slate-700 rounded-lg hover:bg-slate-600 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800 focus-visible:ring-sky-400">
+              <i class="fa-solid fa-font"></i>
             </button>
             <!-- Primary Button: "Download" -->
-            <button  disabled id="download-button" title="Disabled by admin" class="flex items-center gap-2 px-2 py-2 pt-3 text-sm font-medium text-white bg-sky-500 rounded-lg hover:bg-sky-600 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800 focus-visible:ring-sky-400 shadow-md hover:shadow-sky-500/40">
-                Download
+            <button id="download-button" class="flex items-center gap-2 px-5 py-2 pt-2 text-[20px] font-medium text-white bg-sky-500 rounded-lg hover:bg-sky-600 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800 focus-visible:ring-sky-400 shadow-md hover:shadow-sky-500/40">
+                <i class="fa-solid fa-download fa-bounce"></i>
             </button>
+          <button id="whatsapp-button" class="flex items-center gap-2 px-5 py-2 pt-2 text-[20px] font-medium text-white bg-green-500 rounded-lg hover:bg-green-600 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800 focus-visible:ring-green-400 shadow-md hover:shadow-green-500/40">
+        <i class="fa-brands fa-whatsapp"></i>
+    </button>
         </div>
     </div>
-
-<!-- Controls -->
-   <div class="w-full max-w-md">
-        <!-- Controls Container -->
-        <div class="bg-slate-800/80 backdrop-blur-sm p-3 rounded-xl shadow-lg flex justify-center items-center gap-4 border border-slate-700">
-            <!-- Primary Button: "Saved Data" -->
-            <button disabled id="save-button" title="Disabled by admin" onclick="window.location.href ='report.html'" class="flex items-center gap-2 px-2 py-2 pt-3 text-sm font-medium text-black bg-white rounded-lg hover:bg-sky-600 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800 focus-visible:ring-sky-400 shadow-md hover:shadow-sky-500/40">
-                Show Saved Data
-            </button>
-        </div>
+<div class="w-full mt-0 max-w-md">
+<iframe 
+  src="../youtube.html" 
+  style="width: 100%; height: 400px; overflow: hidden;" 
+  scrolling="no"
+  title="Content Frame">
+</iframe>
     </div>
-
-
 
   <!-- Font Modal -->
   <div id="font-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
@@ -120,155 +119,52 @@
       </button>
     </div>
   </div>
-  <!--
-<div class="mt-8 bg-gradient-to-br from-yellow-200 via-yellow-100 to-white text-gray-900 rounded-2xl shadow-xl border border-yellow-300 px-6 py-5 space-y-1 text-[clamp(0.8rem,2.2cqw,1.1rem)] leading-relaxed tracking-wide font-[500]">
-  <div class="text-xl font-bold text-orange-700 underline decoration-dotted underline-offset-4">
-    ಗಮನಿಸಿ:
-  </div>
-
-  <div>
-1. ಈ ಪೋಸ್ಟರ್‌ನಲ್ಲಿ ಈ ವಾರದ <span class="font-semibold text-orange-600">ಶುಕ್ರವಾರದ ದಿನಾಂಕ</span>ವು ಆಟೋಮ್ಯಾಟಿಕ್ ಅಪ್ಡೇಟ್ಗೊಳಿಸಲಾಗಿದೆ. ದಿನಾಂಕವನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ ಬದಲಾಯಿಸಬುದು.<br>
-    <br>
-2. <span class="font-semibold text-orange-600">ಹೆಸರು ಮತ್ತು ಸ್ಥಳ</span>ವನ್ನು ಕ್ಲಿಕ್ ಮಾಡುವ ಮೂಲಕ ಬದಲಾಯಿಸಬಹುದು.<br>
-    <br>
-3. ಇಂದು ಮಾಡಿದ ಬದಲಾವಣೆಗಳು <span class="font-semibold text-orange-600">ಈ ಮೊಬೈಲ್ ಅಥವಾ ಕಂಪ್ಯೂಟರ್ನಲ್ಲಿ ಮಾತ್ರ</span> ಸಂರಕ್ಷಿಸಲಾಗುತ್ತದೆ. ಮುಂದಿನ ಬಾರಿ ಭೇಟಿ ನೀಡುವಾಗ ನೀವು ಕೊನೆಯ ಬದಲಾವಣೆಗಳನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ನೋಡಬಹುದು. 
-  </div>
-</div>
- Rule
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /annapoorna_poster1/{docId} {
-      allow read, write: if true; // change later
-    }
-    match /sharabeswara_poster1/{docId} {
-      allow read, write: if true; // change later
-    }
-  }
-}
-  -->
-<!-- Firebase + Save Data + Download Poster -->
 <script type="module">
-
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-  import {
-    getFirestore,
-    collection,
-    doc,
-    getDoc,
-    setDoc,
-    updateDoc,
-    addDoc
-  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
   import * as htmlToImage from "https://cdn.skypack.dev/html-to-image";
 
-  // Firebase config (already present)
-  const firebaseConfig = {
-    apiKey: "AIzaSyCZejpQv-Ru-OlzWsjzFF_37e8b8DIC3u8",
-    authDomain: "posterdata-113da.firebaseapp.com",
-    projectId: "posterdata-113da",
-    storageBucket: "posterdata-113da.appspot.com",
-    messagingSenderId: "702186025024",
-    appId: "1:702186025024:web:488eec752f7f6c382cefa5",
-    measurementId: "G-YQHKJTNHKG"
-  };
+  const fontModalButton = document.getElementById('font-modal-button');
+  const downloadButton = document.getElementById('download-button');
+  const saveButton = document.getElementById('save-button');
+  const fontModal = document.getElementById('font-modal');
+  const closeModalButton = document.getElementById('close-modal-button');
+  const fontOptions = document.querySelectorAll('.font-option');
+  const invitationCard = document.getElementById('invitation-card');
+  const scanningOverlay = document.getElementById('scanningOverlay');
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  // Font Modal Toggle Logic
+  fontModalButton.addEventListener('click', () => {
+    fontModal.classList.remove('hidden');
+    fontModal.classList.add('flex');
+  });
+  closeModalButton.addEventListener('click', () => {
+    fontModal.classList.add('hidden');
+  });
+  fontModal.addEventListener('click', e => {
+    if (e.target === fontModal) fontModal.classList.add('hidden');
+  });
 
-
-    const btnconfigRef = doc(db, "settings", "btn_config");
-
-    async function applyButtonSettings() {
-      const snap = await getDoc(btnconfigRef);
-      if (snap.exists()) {
-        const data = snap.data();
-
-        toggleButton("font-modal-button", data.enableFontChange);
-        toggleButton("download-button", data.enableDownload);
-        toggleButton("save-button", data.enableSavedData);
-      }
-    }
-
-    function toggleButton(id, enabled) {
-      const btn = document.getElementById(id);
-      btn.disabled = !enabled;
-      btn.title = enabled ? "" : "Disabled by admin";
-    }
-
-    applyButtonSettings();  
-  
-  // Your existing poster save + htmlToImage logic here...
-
-    const fontModalButton = document.getElementById('font-modal-button');
-    const downloadButton = document.getElementById('download-button');
-    const saveButton = document.getElementById('save-button');
-    const fontModal = document.getElementById('font-modal');
-    const closeModalButton = document.getElementById('close-modal-button');
-    const fontOptions = document.querySelectorAll('.font-option');
-    const invitationCard = document.getElementById('invitation-card');
-    const scanningOverlay = document.getElementById('scanningOverlay');
-
-    // Font Modal
-    fontModalButton.addEventListener('click', () => {
-      fontModal.classList.remove('hidden');
-      fontModal.classList.add('flex');
-    });
-    closeModalButton.addEventListener('click', () => {
+  // Font Selection Logic
+  fontOptions.forEach(option => {
+    option.addEventListener('click', () => {
+      const selectedFont = option.getAttribute('data-font');
+      invitationCard.style.fontFamily = selectedFont;
+      document.fonts.ready.then(() => {
+        autoFitText('[contenteditable="true"]');
+      });
       fontModal.classList.add('hidden');
     });
-    fontModal.addEventListener('click', e => {
-      if (e.target === fontModal) fontModal.classList.add('hidden');
-    });
+  });
 
-    fontOptions.forEach(option => {
-      option.addEventListener('click', () => {
-        const selectedFont = option.getAttribute('data-font');
-        invitationCard.style.fontFamily = selectedFont;
-        document.fonts.ready.then(() => {
-          autoFitText('[contenteditable="true"]');
-        });
-        fontModal.classList.add('hidden');
-      });
-    });
-  
-  // On click Download
+  // Download Logic
   downloadButton.addEventListener("click", async () => {
     scanningOverlay.classList.add('active');
-    downloadButton.textContent = 'Downloading...';
+    downloadButton.innerHTML =`<i class="fa-solid fa-spinner fa-spin"></i>`;
     downloadButton.disabled = true;
 
     const dateText = document.getElementById("change1")?.textContent || "";
-    const name = document.getElementById("change2")?.textContent || "";
-    const address = document.getElementById("change3")?.textContent || "";
-    const time = document.getElementById("change4")?.textContent || "";
-
-    // Extract date and season
     const dateMatch = dateText.match(/(\d{2}-\d{2}-\d{4})/);
     const rawDate = dateMatch ? dateMatch[1] : '';
- 
     const formattedDate = formatDate(rawDate); // dd-MMM-yyyy
-
-    // Save to Firestore
-    try {
-      saveButton.textContent = 'Saving...';
-      await addDoc(collection(db, "sharabeswara_poster1"), {
-        name: name.trim(),
-        address: address.trim(),
-        time: time.trim(),
-        date: formattedDate,
-      });
-      console.log("🔥 Data stored in Firebase:", name, address, time, formattedDate);
-      saveButton.textContent = 'Saved..';
-      setTimeout(function() {
-      saveButton.textContent = 'Show Saved Data';
-      }, 2000);
-
-    } catch (err) {
-      console.error("❌ Error storing data:", err);
-      saveButton.textContent = 'Faild to save';
-    }
 
     // Convert to image
     document.fonts.ready.then(() => {
@@ -282,48 +178,37 @@ service cloud.firestore {
           link.href = dataUrl;
           link.click();
 
-          downloadButton.textContent = 'Downloaded';
+          downloadButton.innerHTML =`<i class="fa-solid fa-circle-check fa-fade"></i>`;
           downloadButton.disabled = false;
 
-window.parent.postMessage({
-  type: "showMessage",
-  message: `<strong>${filename} - Downloaded successfully!</strong>`,
-  variant: "success"
-}, "*");
+          window.parent.postMessage({
+            type: "showMessage",
+            message: `<strong>${filename} - Downloaded successfully!</strong>`,
+            variant: "success"
+          }, "*");
 
-gtag('event', 'file_download', {
-  status: 'success',          // or 'failed'
-  filename: filename,         // example: 'resume.pdf'
-  value: 1
-});
-
-scanningOverlay.classList.remove('active'); 
-     
+          scanningOverlay.classList.remove('active');
         })
         .catch(error => {
           console.error('Error downloading:', error);
-          downloadButton.textContent = 'Download Again';
+          downloadButton.innerHTML = `<i class="fa-solid fa-arrow-rotate-right fa-shake"></i>`;
           downloadButton.disabled = false;
-scanningOverlay.classList.remove('active'); 
- window.parent.postMessage({
-  type: "showMessage",
-  message: `<strong>Download failed. Please try again.</strong>`,
-  variant: "error"
-}, "*");
+          scanningOverlay.classList.remove('active');
           
-gtag('event', 'Download Failed - ' + filename, {
-  value: 0
-});
-
+          window.parent.postMessage({
+            type: "showMessage",
+            message: `<strong>Download failed. Please try again.</strong>`,
+            variant: "error"
+          }, "*");
         });
     });
   });
 
   // Date Formatter → dd-MMM-yyyy
   function formatDate(ddmmyyyy) {
+    if (!ddmmyyyy) return "";
     const [dd, mm, yyyy] = ddmmyyyy.split("-");
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
-                    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const month = months[parseInt(mm, 10) - 1] || "Month";
     return `${dd}-${month}-${yyyy}`;
   }
@@ -340,115 +225,74 @@ gtag('event', 'Download Failed - ' + filename, {
     });
   }
 
-// Auto set next day (tomorrow)
-const change1 = document.getElementById('change1');
-if (change1) {
-  const today = new Date();
-  const nextDay = new Date(today);
-  nextDay.setDate(today.getDate() + 1);
+  // Auto set next day (tomorrow)
+  const change1 = document.getElementById('change1');
+  if (change1) {
+    const today = new Date();
+    const nextDay = new Date(today);
+    nextDay.setDate(today.getDate() + 1);
 
-  const dd = String(nextDay.getDate()).padStart(2, '0');
-  const mm = String(nextDay.getMonth() + 1).padStart(2, '0');
-  const yyyy = nextDay.getFullYear();
-  change1.textContent = `${dd}-${mm}-${yyyy}`;
-}
-
-// Restore + Save
-['change2', 'change4', 'change5'].forEach(id => {
-  const saved = localStorage.getItem(`poster_${id}`);
-  const el = document.getElementById(id);
-
-  if (el && saved) {
-    el.textContent = saved;
+    const dd = String(nextDay.getDate()).padStart(2, '0');
+    const mm = String(nextDay.getMonth() + 1).padStart(2, '0');
+    const yyyy = nextDay.getFullYear();
+    change1.textContent = `${dd}-${mm}-${yyyy}`;
   }
 
-  if (el) {
-    el.addEventListener('blur', () => {
-      localStorage.setItem(`poster_${id}`, el.textContent);
-    });
-  }
-});
-  
-  // 🔒 Track user only if admin enables tracking
-const configRef = doc(db, "settings", "config");
-const configSnap = await getDoc(configRef);
+  // Restore from LocalStorage + Save on Blur
+  ['change2', 'change4', 'change5'].forEach(id => {
+    const saved = localStorage.getItem(`poster_${id}`);
+    const el = document.getElementById(id);
 
-if (configSnap.exists() && configSnap.data().tracking_enabled) {
-
-  // ✅ 1. FIXED PAGE NAME (Replaced dynamic title logic)
-  const PAGE_NAME = "Sharabeswara Poster Editor";
-  const rawTitle = PAGE_NAME; // Keep consistent title for records
-
-  // ✅ 2. REGISTER THE PAGE
-  // This writes to the parent document so 'settings.html' can find this page
-  const timestamp = new Date().toISOString();
-  await setDoc(doc(db, "visitor_logs", PAGE_NAME), {  
-      last_active: timestamp,
-      page_title: rawTitle
-  }, { merge: true });
-
-  // ✅ 3. IDENTIFY VISITOR
-  let visitorId = null;
-
-  try {
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    if (userInfo && userInfo.email) {
-      visitorId = userInfo.email; // Use email if logged in
+    if (el && saved) {
+      el.textContent = saved;
     }
-  } catch (e) {
-    console.warn("Invalid userInfo in localStorage");
-  }
 
-  // If no email, use persistent random ID
-  if (!visitorId) {
-    visitorId = localStorage.getItem("visitor_id") || crypto.randomUUID();
-    localStorage.setItem("visitor_id", visitorId);
-  }
+    if (el) {
+      el.addEventListener('blur', () => {
+        localStorage.setItem(`poster_${id}`, el.textContent);
+      });
+    }
+  });
 
-  // ✅ 4. LOG THE VISIT (Subcollection)
-  const visitRef = doc(
-    db,
-    "visitor_logs",
-    PAGE_NAME,
-    "visitors",
-    visitorId
-  );
+  // WhatsApp Clipboard Share
+  const whatsappButton = document.getElementById('whatsapp-button');
+  whatsappButton.addEventListener("click", async () => {
+    scanningOverlay.classList.add('active');
+    whatsappButton.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
+    whatsappButton.disabled = true;
 
-  const visitSnap = await getDoc(visitRef);
+    try {
+      const dataUrl = await htmlToImage.toPng(invitationCard, {
+        cacheBust: true,
+        quality: 1
+      });
 
-  if (!visitSnap.exists()) {
-    // ✅ New Visitor
-    await setDoc(visitRef, {
-      visitor_id: visitorId,
-      screenWidth: window.screen.width,
-      screenHeight: window.screen.height,
-      viewportWidth: window.innerWidth,
-      viewportHeight: window.innerHeight,
-      visitCount: 1,
-      visits: [timestamp]
-    });
-    console.log(`✅ Tracked new visitor on: ${PAGE_NAME}`);
-  } else {
-    // ✅ Returning Visitor
-    const data = visitSnap.data();
-    const newCount = (data.visitCount || 0) + 1;
-    
-    // Keep only last 5 timestamps
-    const oldVisits = data.visits || [];
-    const updatedVisits = [...oldVisits, timestamp].slice(-5);
+      const blob = await (await fetch(dataUrl)).blob();
 
-    await updateDoc(visitRef, {
-      visitCount: newCount,
-      visits: updatedVisits
-    });
-    console.log(`🔁 Tracked visit #${newCount} on: ${PAGE_NAME}`);
-  }
+      await navigator.clipboard.write([
+        new ClipboardItem({ "image/png": blob })
+      ]);
 
-} else {
-  console.log("ℹ️ Visitor tracking is disabled by admin.");
-}
-  
+      if (window.top) {
+        const encodedText = encodeURIComponent("🙏");
+        window.top.location.href = "whatsapp://send?text=" + encodedText;
+      }
 
+      setTimeout(() => {
+        alert("📌 Image copied!\nIn WhatsApp → Tap the message box → Paste the image.");
+      }, 600);
+
+    } catch (error) {
+      console.error("Clipboard copy failed:", error);
+      alert("Clipboard not supported.\nTry long press → Paste manually.");
+    } finally {
+      scanningOverlay.classList.remove('active');
+      whatsappButton.disabled = false;
+      setTimeout(() => {
+        whatsappButton.innerHTML = `<i class="fa-brands fa-whatsapp"></i>`;
+      }, 2000);
+    }
+  });
 </script>
 
 </body>
