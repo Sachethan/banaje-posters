@@ -1,0 +1,234 @@
+body {
+      font-family: 'Noto Sans Kannada', sans-serif;
+    }
+    
+button[disabled] {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .aspect-ratio-box {
+      position: relative;
+      width: 100%;
+      padding-top: 125%; /* 4:5 aspect */
+    }
+@keyframes blink {
+      0%,100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+
+    #invitation-card {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      background-image: url('https://sachethan.github.io/salian/pages/online tool/posters/sharabeswara/image/bg2.png');
+      background-size: cover;
+      flex-direction: column;
+     /* container-type: inline-size;*/
+    }
+
+  .gradient-text {
+background: radial-gradient(circle,rgba(255, 36, 36, 1) 0%, rgba(255, 255, 255, 1) 0%, rgba(255, 54, 54, 1) 0%, rgba(150, 17, 17, 1) 0%, rgba(214, 87, 13, 1) 50%, rgba(128, 17, 17, 1) 100%, rgba(173, 12, 12, 1) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+    .text-header { font-size: clamp(0.5rem, 2.2cqw, 1rem); }
+    .text-title { font-size: clamp(1.2rem, 4vw, 2.2rem); }
+    .text-subtitle { font-size: clamp(0.8rem, 3.5cqw, 1.5rem); }
+    .text-body-xl { font-size: clamp(0.9rem, 3.8cqw, 1.8rem); }
+    .text-body-lg { font-size: clamp(0.8rem, 3.2cqw, 1.5rem); }
+    .text-body-md { font-size: clamp(0.7rem, 2.8cqw, 1.2rem); }
+    
+    .text-footer { 
+        font-size: clamp(0.9rem, 2.2cqw, 1rem);
+        bottom: 25px;
+    }
+
+    [contenteditable="true"]:hover {
+      outline: 2px dashed rgba(255,255,255,0.5);
+      background-color: rgba(0,0,0,0.05);
+    }
+    [contenteditable="true"]:focus {
+      outline: 2px solid #fbbf24;
+      background-color: rgba(0,0,0,0.1);
+    }
+
+@media screen and (min-width: 360px) and (max-width: 362px) {
+.ctm-Content{
+  font-size: 0.7rem;
+  height: auto;
+  border: 1px solid red;
+  margin-top: 3px;
+  padding: 12px;
+  }
+  .address{
+     height: auto;
+     width: 100%;
+     border: 1px solid red;
+     font-size: 0.8rem;
+     bottom: 0px;
+   }
+  
+  .ctm-TopContent{
+  font-size: 0.7rem;
+  left: 50%;
+  transform: translate(-50%, 110px);
+    margin-bottom: 0;
+    padding: 0;
+  }
+  
+  .seve{
+    font-size: 0.6rem;
+  }
+ .ctm-Content #change2{
+ font-size: 0.7rem;
+margin-top: 12px;   
+ }
+  
+}
+
+@media screen and (min-width: 393px) and (max-width: 400px) {
+  .text-title {
+    font-size: 1rem;
+  }
+  .ctm-Content{
+    bottom: 75px;
+    font-size: 0.85rem;
+    border: 1px solid red;
+  }
+  
+ .friday{
+   font-size: 0.9rem;
+ }
+  
+  .ctm-Content #change1{
+ font-size: 0.65rem;  
+ }
+.text-header{
+    top:21px;
+  }
+  
+}
+
+@media screen and (min-width: 436px) and (max-width: 437px) {
+.ctm-Content{
+  font-size: 0.9rem;
+  height: auto;
+  border: 1px solid red;
+  }
+   .address{
+     height: auto;
+     width: 100%;
+     border: 1px solid red;
+     font-size: 1rem;
+     bottom: 0px;
+   }
+  
+  .ctm-TopContent{
+  font-size: 1.3rem;
+ top: 50%;
+  left: 50%;
+  transform: translate(-50%, 55%);
+  }
+  
+ .friday{
+   font-size: 0.9rem;
+ }
+  .seve{
+    font-size: 1.2rem;
+  }
+ .ctm-Content #change1{
+ font-size: 1rem;  
+ }
+.text-header{
+    top:21px;
+  }
+  
+}
+
+        /* Custom CSS for the scanning animation */
+        @keyframes scan-animation {
+            0% {
+                background-position: 0 -200%, 0 0; /* Initial position for scan line (top) and stars */
+            }
+            100% {
+                background-position: 0 200%, 0 100%; /* Final position for scan line (bottom) and stars */
+            }
+        }
+
+        .scanning-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+          z-index:1;
+            /* Layer 1: Professional blue scan line (top-to-bottom) */
+            background-image: linear-gradient(180deg, transparent,
+                                             rgba(100, 180, 255, 0.3),  /* Light blue with transparency */
+                                             rgba(100, 180, 255, 0.6),  /* Slightly darker blue with transparency */
+                                             rgba(100, 180, 255, 0.3),
+                                             transparent),
+                            /* Layer 2: Stars - small white radial gradients repeated */
+                            radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.9) 1px, transparent 2px);
+
+            background-size: 100% 200%, 60px 60px; /* Scan line size (100% width, 200% height for vertical sweep), Star pattern size (60x60px grid) */
+            background-repeat: no-repeat, repeat; /* Scan line doesnt repeat, stars repeat to fill */
+            animation: scan-animation 2s infinite linear; /* Adjust duration as needed */
+            pointer-events: none; /* Allows clicks to pass through to elements below */
+            opacity: 0; /* Hidden by default */
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .scanning-overlay.active {
+            opacity: 1;
+        }
+  #loadimg {
+
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+#loadimg div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+#loadimg img.logo {
+    width: 75px; /* Adjust the size of your logo */
+    height: auto;
+    z-index: 1000;
+  filter: invert(100%);
+}
+
+#loadimg span {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border: 4px solid transparent;
+    border-top: 4px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 1000;
+}
+
+/* Animation for the spinner */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+

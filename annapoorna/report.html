@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Poster Data Manager</title>
+  <!-- Google Fonts for Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  
+  <!-- Firebase Libraries -->
+  <script type="module" src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+  
+  <!-- JS Libraries for Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+  <!-- PDF Libraries REMOVED -->
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-YQHKJTNHKG"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-YQHKJTNHKG');
+  </script>
+
+  <style>
+    /* CSS Variables for consistent theming */
+    :root {
+      --bg-color: #f4f6f8;
+      --card-bg: #ffffff;
+      --text-primary: #333d47;
+      --text-secondary: #6c757d;
+      --accent-teal: #1abc9c;
+      --accent-red: #e74c3c;
+      --accent-green: #2ecc71;
+      --accent-blue: #3498db;
+      --border-color: #e0e0e0;
+      --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.05);
+      --shadow-hover: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Base Body Styles */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-primary);
+      margin: 0;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+
+    /* Main Heading */
+    h2 {
+      text-align: center;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      margin-top: 0;
+      font-weight: 600;
+      font-size: 2rem;
+    }
+
+    /* Top Action Bar Layout */
+    .action-bar {
+      display: flex;
+      flex-wrap: wrap; /* Allow wrapping for responsiveness */
+      justify-content: center; /* Center buttons */
+      align-items: center; /* Align items vertically */
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+      max-width: 1000px; /* Max width for better readability on large screens */
+      margin-left: auto;
+      margin-right: auto;
+      padding: 1rem;
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: var(--shadow-light);
+    }
+
+    /* Input Field Styling */
+    input[type="text"],
+    input[type="date"] {
+      flex-grow: 1; /* Allow search input to grow */
+      min-width: 180px; /* Minimum width for search input */
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1rem;
+      color: var(--text-primary);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      box-sizing: border-box; /* Include padding in width */
+    }
+    
+    input[type="text"]:focus,
+    input[type="date"]:focus {
+      outline: none;
+      border-color: var(--accent-teal);
+      box-shadow: 0 0 0 3px rgba(26, 188, 156, 0.2);
+    }
+    
+    /* Checkbox styling */
+    .entry-select {
+        width: 18px;
+        height: 18px;
+        margin-right: 0.75rem;
+        cursor: pointer;
+        accent-color: var(--accent-teal);
+    }
+
+    /* Button Styling - Smaller */
+    .btn {
+      padding: 0.5rem 1rem; /* Smaller padding */
+      border: none;
+      background: var(--accent-teal);
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem; /* Smaller font size */
+      transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      white-space: nowrap; /* Prevent text wrapping on buttons */
+    }
+
+    .btn:hover {
+      background: #16a085;
+    }
+    
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn.danger { background: var(--accent-red); }
+    .btn.danger:hover { background: #c0392b; }
+    
+    /* Style for Delete Selected button when active */
+    .btn.danger#deleteSelectedBtn {
+        background: #c0392b; /* Start slightly darker */
+    }
+    .btn.danger#deleteSelectedBtn.active {
+        background: var(--accent-red);
+        box-shadow: 0 0 8px rgba(231, 76, 60, 0.5); /* Add a glow */
+        transform: scale(1.02); /* Make it slightly larger */
+    }
+
+    .btn.update { background: var(--accent-green); }
+    .btn.update:hover { background: #27ae60; }
+    .btn.filter-btn { background: var(--accent-blue); } /* Specific for filter trigger */
+    .btn.filter-btn:hover { background: #2980b9; }
+    .btn.reset { background: var(--text-secondary); }
+    .btn.reset:hover { background: #5a6268; }
+
+    /* Entry Card Styling */
+    .entry-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: var(--shadow-light);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      transition: box-shadow 0.2s ease;
+      max-width: 1000px;
+      margin-left: auto;
+      margin-right: auto;
+      
+      /* Animation properties */
+      opacity: 0; /* Start hidden */
+      transform: translateY(20px); /* Start slightly below */
+      transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* Smooth transition */
+    }
+
+    .entry-card.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .entry-card:hover {
+      box-shadow: var(--shadow-hover);
+    }
+    
+    .entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 1rem;
+    }
+    
+    .entry-header-left {
+        display: flex;
+        align-items: center;
+        flex-grow: 1; /* Allow this to take up space */
+    }
+    
+    .entry-header strong {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      /* Make the text clickable to toggle content */
+      flex-grow: 1;
+      margin-left: 0.5rem; /* Space between checkbox and text */
+    }
+    
+    .toggle-btn {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      transition: transform 0.3s ease;
+      cursor: pointer;
+      padding: 0.25rem;
+      margin-left: 1rem; /* Space between text and chevron */
+    }
+    
+    .entry-content {
+      display: none;
+      margin-top: 1.5rem;
+    }
+    
+    .entry-content.expanded {
+      display: block;
+    }
+    
+    .toggle-btn.expanded i {
+      transform: rotate(90deg);
+    }
+
+    /* Form Group Styling */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    /* Action Buttons within Card */
+    .card-actions {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* Modal Styles */
+    .modal-overlay, .message-box-overlay {
+      display: flex; /* Keep flex for centering */
+      position: fixed; /* Stay in place */
+      z-index: 1000; /* Sit on top */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+      justify-content: center;
+      align-items: center;
+
+      /* Animation properties */
+      visibility: hidden; /* Hidden by default for transition */
+      opacity: 0; /* Start transparent */
+      transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+    }
+
+    .modal-overlay.show, .message-box-overlay.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    /* Modal Content Animation (for slide-in effect) */
+    .modal-content, .message-box-content {
+      transform: scale(0.95); /* Start slightly smaller */
+      transition: transform 0.3s ease-out;
+    }
+
+    .modal-overlay.show .modal-content,
+    .message-box-overlay.show .message-box-content {
+      transform: scale(1); /* Scale to normal size */
+    }
+
+    .modal-content {
+      background-color: var(--card-bg);
+      margin: auto;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: var(--shadow-hover);
+      width: 90%; /* Responsive width */
+      max-width: 500px; /* Max width for modal */
+      position: relative;
+    }
+
+    .modal-content h3 {
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+      color: var(--text-primary);
+      text-align: center;
+    }
+
+    .modal-close-btn {
+      color: var(--text-secondary);
+      position: absolute;
+      top: 1rem;
+      right: 1.5rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .modal-close-btn:hover,
+    .modal-close-btn:focus {
+      color: var(--accent-red);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: space-between; /* Space out buttons */
+      flex-wrap: wrap; /* Allow wrapping */
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+    }
+    
+    .modal-actions-right {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+
+    /* Custom Message Box Styles */
+    .message-box-content p {
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+      color: var(--text-primary);
+    }
+
+    .message-box-content {
+      background-color: var(--card-bg);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: var(--shadow-hover);
+      text-align: center;
+      max-width: 400px;
+      position: relative;
+    }
+
+    .message-box-actions {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    /* Duplicate Info Div */
+    .duplicate-info {
+      background: #e9f5f5; /* Light teal background */
+      border: 1px solid #cce7e7;
+      border-radius: 8px;
+      padding: 0.75rem 1.25rem;
+      margin-bottom: 1.5rem;
+      max-width: 1000px;
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      box-shadow: var(--shadow-light);
+      transition: box-shadow 0.2s ease;
+      cursor: pointer; /* Make it clear its clickable */
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    }
+
+    .duplicate-info.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .duplicate-info:hover {
+      box-shadow: var(--shadow-hover);
+      background: #d4eded; /* Slightly darker on hover */
+    }
+
+    .duplicate-info p {
+      margin: 0;
+      font-weight: 500;
+    }
+
+    /* Loading Spinner */
+    .loading-spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-left-color: var(--accent-teal);
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* NEW: Data Table Styles */
+    .table-wrapper {
+        overflow-x: auto;
+        max-width: 1000px;
+        margin-left: auto;
+        margin-right: auto;
+        border-radius: 12px;
+        box-shadow: var(--shadow-light);
+        background: var(--card-bg);
+    }
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        color: var(--text-primary);
+    }
+    .data-table th, .data-table td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--border-color);
+        white-space: nowrap; /* Prevent text wrapping */
+    }
+    .data-table th {
+        background: #f9fafb; /* Light grey header */
+        font-weight: 600;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+    }
+    .data-table tbody tr:hover {
+        background-color: var(--bg-color);
+    }
+    .data-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+    /* Checkbox column */
+    .data-table th:first-child, .data-table td:first-child {
+        width: 40px;
+        text-align: center;
+        padding-right: 0.5rem;
+    }
+
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      body { padding: 1rem; }
+      h2 { font-size: 1.75rem; }
+      .action-bar { 
+        padding: 0.75rem;
+      }
+      .action-bar input[type="text"] {
+        width: 100%; /* Full width for search input */
+      }
+      .btn {
+        width: auto; /* Allow buttons to size based on content */
+        flex-grow: 1; /* Allow buttons to grow and fill space */
+      }
+      .entry-card { padding: 1rem; }
+      .entry-header strong { font-size: 1rem; }
+      .modal-content {
+        padding: 1.5rem;
+      }
+      .duplicate-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+      .modal-actions {
+        flex-direction: column; /* Stack modal buttons */
+      }
+      .modal-actions-right {
+        justify-content: flex-end; /* Align right-side buttons */
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Poster Saved Data</h2>
+
+  <div class="action-bar">
+    <input type="text" id="searchInput" placeholder="Search name, date, season...">
+    <button class="btn" onclick="downloadExcel()">
+      <i class="fas fa-file-excel"></i> Export to Excel
+    </button>
+    <!-- UPDATED: Toggle View Button -->
+    <button class="btn" id="toggleViewBtn" onclick="toggleView()">
+      <i class="fas fa-list"></i> View as Table
+    </button>
+    <button class="btn filter-btn" onclick="openFilterModal()">
+      <i class="fas fa-calendar-alt"></i> Date Filters
+    </button>
+    <button class="btn danger" id="deleteSelectedBtn" onclick="deleteSelected()">
+      <i class="fas fa-trash-alt"></i> Delete Selected (0)
+    </button>
+    <button class="btn reset" onclick="resetAllFilters()">
+      <i class="fas fa-undo-alt"></i> Reset
+    </button>
+  </div>
+
+  <!-- Main container for Cards OR Table -->
+  <div id="data-container"></div>
+
+  <!-- Filter Modal (unchanged) -->
+  <div id="filterModal" class="modal-overlay">
+    <div class="modal-content">
+      <span class="modal-close-btn" onclick="closeFilterModal()">&times;</span>
+      <h3>Apply Date Filters</h3>
+      <div class="form-group">
+        <label for="modalStartDate">Start Date</label>
+        <input type="date" id="modalStartDate">
+      </div>
+      <div class="form-group">
+        <label for="modalEndDate">End Date</label>
+        <input type="date" id="modalEndDate">
+      </div>
+      <div class="modal-actions">
+        <button class="btn danger" onclick="deleteByDateRange()">
+          <i class="fas fa-calendar-times"></i> Delete Date Range
+        </button>
+        <div class="modal-actions-right">
+            <button class="btn reset" onclick="resetDateFilters()">
+              <i class="fas fa-undo"></i> Reset Dates
+            </button>
+            <button class="btn filter-btn" onclick="applyFilters()">
+              <i class="fas fa-check"></i> Apply
+            </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Message Box (unchanged) -->
+  <div id="messageBox" class="message-box-overlay">
+    <div class="message-box-content">
+      <p id="messageBoxText"></p>
+      <div class="message-box-actions">
+        <button class="btn" onclick="closeMessageBox()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Confirmation Box (unchanged) -->
+  <div id="confirmBox" class="message-box-overlay">
+    <div class="message-box-content">
+      <p id="confirmBoxText"></p>
+      <div class="message-box-actions">
+        <button class="btn danger" id="confirmNo">No</button>
+        <button class="btn update" id="confirmYes">Yes</button>
+      </div>
+    </div>
+  </div>
+
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+    // Firebase configuration and initialization
+    const firebaseConfig = {
+      apiKey: "AIzaSyCZejpQv-Ru-OlzWsjzFF_37e8b8DIC3u8",
+      authDomain: "posterdata-113da.firebaseapp.com",
+      projectId: "posterdata-113da",
+      storageBucket: "posterdata-113da.appspot.com",
+      messagingSenderId: "702186025024",
+      appId: "1:702186025024:web:488eec752f7f6c382cefa5",
+      measurementId: "G-YQHKJTNHKG"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const container = document.getElementById("data-container");
+    const searchInput = document.getElementById("searchInput");
+    const filterModal = document.getElementById("filterModal");
+    const modalStartDateInput = document.getElementById("modalStartDate");
+    const modalEndDateInput = document.getElementById("modalEndDate");
+    const messageBox = document.getElementById("messageBox");
+    const messageBoxText = document.getElementById("messageBoxText");
+    const confirmBox = document.getElementById("confirmBox");
+    const confirmBoxText = document.getElementById("confirmBoxText");
+    const deleteSelectedBtn = document.getElementById("deleteSelectedBtn");
+    const toggleViewBtn = document.getElementById("toggleViewBtn");
+    
+    let resolveConfirm;
+    let allEntries = [];
+    let currentFilteredEntries = [];
+    let selectedEntries = new Set();
+    
+    // NEW: State for current view mode
+    let viewMode = 'cards'; // 'cards' or 'table'
+
+    /**
+     * Formats a date string into YYYY-MM-DD for input[type="date"].
+     */
+    function formatDateForInput(dateString) {
+      try {
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return '';
+        const offset = date.getTimezoneOffset();
+        const correctedDate = new Date(date.getTime() + (offset * 60 * 1000));
+        const year = correctedDate.getFullYear();
+        const month = (correctedDate.getMonth() + 1).toString().padStart(2, '0');
+        const day = correctedDate.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      } catch (e) {
+        console.warn("Could not parse date string:", dateString, e);
+        return '';
+      }
+    }
+  
+    /**
+     * Formats a date string (YYYY-MM-DD) for user display (DD-Mon-YYYY).
+     */
+    function formatDateForDisplay(dateString) {
+      try {
+        const date = new Date(dateString + 'T12:00:00'); 
+        if (isNaN(date)) return '';
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = date.toLocaleString('default', { month: 'short' });
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+      } catch (e) {
+        console.warn("Invalid display date format:", dateString, e);
+        return '';
+      }
+    }
+
+    /**
+     * Displays a custom modal.
+     */
+    function showModal(modalElement) {
+      modalElement.classList.add('show');
+    }
+
+    /**
+     * Hides a custom modal.
+     */
+    function hideModal(modalElement) {
+      modalElement.classList.remove('show');
+    }
+
+    /**
+     * Displays a custom message box.
+     */
+    window.showMessageBox = (message) => {
+      messageBoxText.textContent = message;
+      showModal(messageBox);
+    };
+
+    /**
+     * Hides the custom message box.
+     */
+    window.closeMessageBox = () => {
+      hideModal(messageBox);
+    };
+
+    /**
+     * Displays a custom confirmation box.
+     */
+    window.showConfirmBox = (message) => {
+      return new Promise((resolve) => {
+        confirmBoxText.textContent = message;
+        showModal(confirmBox);
+        resolveConfirm = resolve;
+        const confirmYes = document.getElementById("confirmYes");
+        const confirmNo = document.getElementById("confirmNo");
+        confirmYes.onclick = () => { hideModal(confirmBox); resolveConfirm(true); };
+        confirmNo.onclick = () => { hideModal(confirmBox); resolveConfirm(false); };
+      });
+    }
+
+    /**
+     * Opens the filter modal.
+     */
+    window.openFilterModal = () => {
+      showModal(filterModal);
+    };
+
+    /**
+     * Closes the filter modal.
+     */
+    window.closeFilterModal = () => {
+      hideModal(filterModal);
+    };
+
+    /**
+     * Loads all poster data from Firestore.
+     */
+    async function loadData() {
+      container.innerHTML = "<p style='text-align:center; color: var(--text-secondary);'><span class='loading-spinner'></span> Loading data...</p>";
+      try {
+        const snapshot = await getDocs(collection(db, "annapoorna_poster1"));
+        allEntries = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+          date: formatDateForInput(doc.data().date)
+        }));
+        selectedEntries.clear();
+        updateDeleteSelectedButton();
+        applyFilters(); // This will call renderData
+      } catch (error) {
+        console.error("Error loading data: ", error);
+        container.innerHTML = "<p style='text-align:center; color: var(--accent-red);'>Failed to load data. Please try again.</p>";
+      }
+    }
+
+    // NEW: Toggles the view between 'cards' and 'table'
+    window.toggleView = () => {
+        viewMode = (viewMode === 'cards') ? 'table' : 'cards';
+        
+        if (viewMode === 'table') {
+            toggleViewBtn.innerHTML = `<i class="fas fa-th-large"></i> View as Cards`;
+        } else {
+            toggleViewBtn.innerHTML = `<i class="fas fa-list"></i> View as Table`;
+        }
+        
+        // Re-render the currently filtered data in the new view
+        renderData(currentFilteredEntries);
+    };
+    
+    // NEW: Select/Deselect all checkboxes in table view
+    window.toggleSelectAll = (checkbox) => {
+        const checkboxes = container.querySelectorAll('.entry-select');
+        checkboxes.forEach(cb => {
+            cb.checked = checkbox.checked;
+            const id = cb.dataset.id;
+            if (checkbox.checked) {
+                selectedEntries.add(id);
+            } else {
+                selectedEntries.delete(id);
+            }
+        });
+        updateDeleteSelectedButton();
+    };
+
+    // NEW: Main render function that routes to the correct view
+    function renderData(data) {
+        container.innerHTML = ""; // Clear previous content
+        
+        if (data.length === 0) {
+            container.innerHTML = "<p style='text-align:center; color: var(--text-secondary);'>No posters found matching your criteria.</p>";
+            return;
+        }
+
+        if (viewMode === 'table') {
+            renderTable(data);
+        } else {
+            renderCardsAndGroups(data);
+        }
+    }
+
+    // NEW: Renders the data as a table
+    function renderTable(data) {
+        const table = document.createElement('table');
+        table.className = 'data-table';
+        
+        // Create Table Header
+        const thead = document.createElement('thead');
+        thead.innerHTML = `
+            <tr>
+                <th><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)"></th>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Time</th>
+                <th>Season</th>
+            </tr>
+        `;
+        table.appendChild(thead);
+        
+        // Create Table Body
+        const tbody = document.createElement('tbody');
+        data.forEach(entry => {
+            const tr = document.createElement('tr');
+            const isChecked = selectedEntries.has(entry.id);
+            tr.innerHTML = `
+                <td><input type="checkbox" class="entry-select" data-id="${entry.id}" onchange="toggleSelection(this)" ${isChecked ? 'checked' : ''}></td>
+                <td>${formatDateForDisplay(entry.date)}</td>
+                <td>${entry.name}</td>
+                <td>${entry.time}</td>
+                <td>${entry.season}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        
+        // Add table to a wrapper for horizontal scrolling on mobile
+        const tableWrapper = document.createElement('div');
+        tableWrapper.className = 'table-wrapper';
+        tableWrapper.appendChild(table);
+        container.appendChild(tableWrapper);
+    }
+
+    // RENAMED: This was the old renderData function, now specifically for cards
+    function renderCardsAndGroups(data) {
+      // Check if a specific date filter is active
+      const isSpecificDateFiltered = modalStartDateInput.value && modalStartDateInput.value === modalEndDateInput.value;
+      
+      let itemsToRender = [];
+
+      if (isSpecificDateFiltered) {
+        itemsToRender = data;
+      } else {
+        // Group entries by date for condensed view
+        const groupedByDate = data.reduce((acc, entry) => {
+          const date = entry.date;
+          if (!acc[date]) acc[date] = [];
+          acc[date].push(entry);
+          return acc;
+        }, {});
+
+        const sortedDates = Object.keys(groupedByDate).sort((a, b) => new Date(b) - new Date(a));
+
+        sortedDates.forEach(date => {
+          const entriesForDate = groupedByDate[date];
+          itemsToRender.push(entriesForDate[0]); // Add first entry
+
+          if (entriesForDate.length > 1) {
+            const duplicateCount = entriesForDate.length - 1;
+            itemsToRender.push({ type: 'duplicate-info', date: date, count: duplicateCount });
+          }
+        });
+      }
+
+      // Append items to the DOM with staggered animation
+      itemsToRender.forEach((item, index) => {
+        if (item.type === 'duplicate-info') {
+          const duplicateDiv = document.createElement("div");
+          duplicateDiv.className = "duplicate-info";
+          duplicateDiv.setAttribute('onclick', `filterBySpecificDate('${item.date}')`); 
+          duplicateDiv.innerHTML = `<p>+ ${item.count} more on ${formatDateForDisplay(item.date)}</p>`;
+          container.appendChild(duplicateDiv);
+          setTimeout(() => duplicateDiv.classList.add('show'), index * 100);
+        } else {
+          const card = appendEntryCard(item);
+          setTimeout(() => card.classList.add('show'), index * 100);
+        }
+      });
+    }
+
+    /**
+     * Appends a single entry card to the container. (Used by renderCardsAndGroups)
+     */
+    function appendEntryCard(entry) {
+      const formattedDate = formatDateForInput(entry.date);
+      const displayDate = formatDateForDisplay(entry.date);
+      const isChecked = selectedEntries.has(entry.id);
+      
+      const div = document.createElement("div");
+      div.className = "entry-card";
+      div.innerHTML = `
+        <div class="entry-header">
+          <div class="entry-header-left" onclick="toggleContent(this)">
+            <input type="checkbox" class="entry-select" data-id="${entry.id}" onchange="toggleSelection(this)" ${isChecked ? 'checked' : ''} onclick="event.stopPropagation()">
+            <strong>${displayDate} - ${entry.name}</strong>
+          </div>
+          <button class="toggle-btn" onclick="toggleContent(this, true)"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="entry-content">
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" value="${formattedDate}" data-field="date" data-id="${entry.id}">
+          </div>
+          <div class="form-group">
+            <label>Name</label>
+            <input type="text" value="${entry.name}" data-field="name" data-id="${entry.id}">
+          </div>
+          <div class="form-group">
+            <label>Time</label>
+            <input type="text" value="${entry.time}" data-field="time" data-id="${entry.id}">
+          </div>
+          <div class="form-group">
+            <label>Season</label>
+            <input type="text" value="${entry.season}" data-field="season" data-id="${entry.id}">
+          </div>
+          <div class="card-actions">
+            <button class="btn update" onclick="updateEntry('${entry.id}')">
+              <i class="fas fa-save"></i> Update
+            </button>
+            <button class="btn danger" onclick="deleteEntry('${entry.id}')">
+              <i class="fas fa-trash-alt"></i> Delete
+            </button>
+          </div>
+        </div>
+      `;
+      container.appendChild(div);
+      return div;
+    }
+
+
+    /**
+     * Toggles the visibility of an entry's detailed content.
+     */
+    window.toggleContent = (element, fromButton = false) => {
+      const header = element.closest(".entry-header");
+      const card = header.closest(".entry-card");
+      const content = card.querySelector(".entry-content");
+      const icon = card.querySelector(".toggle-btn i");
+      const isExpanded = content.classList.toggle("expanded");
+      icon.style.transform = isExpanded ? "rotate(90deg)" : "rotate(0deg)";
+    };
+
+    /**
+     * Adds or removes an entry ID from the selection set. (Works for both views)
+     */
+    window.toggleSelection = (checkbox) => {
+        const id = checkbox.dataset.id;
+        if (checkbox.checked) {
+            selectedEntries.add(id);
+        } else {
+            selectedEntries.delete(id);
+        }
+        updateDeleteSelectedButton();
+    };
+
+    /**
+     * Updates the text and appearance of the "Delete Selected" button.
+     */
+    function updateDeleteSelectedButton() {
+        const count = selectedEntries.size;
+        deleteSelectedBtn.innerHTML = `<i class="fas fa-trash-alt"></i> Delete Selected (${count})`;
+        deleteSelectedBtn.classList.toggle('active', count > 0);
+    }
+    
+    /**
+     * Deletes all entries currently in the `selectedEntries` set.
+     */
+    window.deleteSelected = async () => {
+        const count = selectedEntries.size;
+        if (count === 0) {
+            showMessageBox("No entries selected. Please check the boxes on the cards or table rows.");
+            return;
+        }
+
+        const confirmed = await showConfirmBox(`Are you sure you want to delete ${count} selected entries? This action cannot be undone.`);
+        if (confirmed) {
+            const deletePromises = [];
+            selectedEntries.forEach(id => {
+                deletePromises.push(deleteDoc(doc(db, "annapoorna_poster1", id)));
+            });
+
+            try {
+                await Promise.all(deletePromises);
+                showMessageBox(`Successfully deleted ${count} entries.`);
+                loadData(); // This will clear selection and reload
+            } catch (error) {
+                showMessageBox("Failed to delete selected entries: " + error.message);
+                console.error("Error deleting selected documents: ", error);
+            }
+        }
+    };
+    
+    /**
+     * Deletes all entries within the date range specified in the filter modal.
+     */
+    window.deleteByDateRange = async () => {
+        const startDate = modalStartDateInput.value;
+        const endDate = modalEndDateInput.value;
+
+        if (!startDate && !endDate) {
+            showMessageBox("Please select a start date and/or an end date to define the range for deletion.");
+            return;
+        }
+
+        const entriesToDelete = allEntries.filter(entry => {
+            const entryDate = new Date(entry.date);
+            const start = startDate ? new Date(startDate) : null;
+            const end = endDate ? new Date(endDate) : null;
+            if (end) end.setHours(23, 59, 59, 999);
+            if (start && end) return entryDate >= start && entryDate <= end;
+            if (start) return entryDate >= start;
+            if (end) return entryDate <= end;
+            return false;
+        });
+
+        const count = entriesToDelete.length;
+        if (count === 0) {
+            showMessageBox("No entries found in the specified date range.");
+            return;
+        }
+        
+        const startDisplay = startDate ? formatDateForDisplay(startDate) : "the beginning";
+        const endDisplay = endDate ? formatDateForDisplay(endDate) : "the end";
+        const confirmed = await showConfirmBox(`Are you sure you want to delete ${count} entries between ${startDisplay} and ${endDisplay}? This action cannot be undone.`);
+        
+        if (confirmed) {
+            const deletePromises = entriesToDelete.map(entry => deleteDoc(doc(db, "annapoorna_poster1", entry.id)));
+            try {
+                await Promise.all(deletePromises);
+                showMessageBox(`Successfully deleted ${count} entries.`);
+                closeFilterModal();
+                loadData();
+            } catch (error) {
+                showMessageBox("Failed to delete entries by date range: " + error.message);
+                console.error("Error deleting documents by date: ", error);
+            }
+        }
+    };
+
+
+    /**
+     * Updates an entire entry in Firestore (from card view).
+     */
+    window.updateEntry = async (id) => {
+      const card = document.querySelector(`.entry-card input[data-id="${id}"]`).closest('.entry-card');
+      const inputs = card.querySelectorAll('input[data-id]');
+      const updates = {};
+      let hasChanges = false;
+      
+      const originalEntry = allEntries.find(e => e.id === id);
+      if (!originalEntry) {
+          showMessageBox("Error: Could not find original entry to compare.");
+          return;
+      }
+
+      inputs.forEach(input => {
+        const field = input.dataset.field;
+        const originalValue = originalEntry[field];
+        let newValue = input.value;
+        if (field === 'date') newValue = formatDateForInput(newValue);
+        if (newValue !== originalValue) {
+          updates[field] = newValue;
+          hasChanges = true;
+        }
+      });
+
+      if (!hasChanges) {
+        showMessageBox("No changes detected to update.");
+        return;
+      }
+      
+      try {
+        await updateDoc(doc(db, "annapoorna_poster1", id), updates);
+        showMessageBox("Updated successfully!");
+        loadData();
+      } catch (error) {
+        showMessageBox("Failed to update: " + error.message);
+        console.error("Error updating document: ", error);
+      }
+    };
+    
+    /**
+     * Deletes a single entry from Firestore (from card view).
+     */
+    window.deleteEntry = async (id) => {
+      const confirmed = await showConfirmBox("Are you sure you want to delete this entry? This action cannot be undone.");
+      if (confirmed) {
+        try {
+          await deleteDoc(doc(db, "annapoorna_poster1", id));
+          showMessageBox("Entry deleted successfully!");
+          loadData();
+        } catch (error) {
+          showMessageBox("Failed to delete: " + error.message);
+          console.error("Error deleting document: ", error);
+        }
+      }
+    };
+
+    /**
+     * Applies all filters and re-renders the data.
+     */
+    window.applyFilters = () => {
+      let filtered = [...allEntries]; // Start with all data
+
+      // 1. Date Filter
+      const startDate = modalStartDateInput.value;
+      const endDate = modalEndDateInput.value;
+
+      if (startDate || endDate) {
+          filtered = filtered.filter(entry => {
+            const entryDate = new Date(entry.date);
+            const start = startDate ? new Date(startDate) : null;
+            const end = endDate ? new Date(endDate) : null;
+            if(end) end.setHours(23, 59, 59, 999);
+            if (start && end) return entryDate >= start && entryDate <= end;
+            if (start) return entryDate >= start;
+            if (end) return entryDate <= end;
+            return true;
+        });
+      }
+
+      // 2. Text Search Filter
+      const searchTerm = searchInput.value.toLowerCase();
+      if (searchTerm) {
+        filtered = filtered.filter(e => 
+          e.name.toLowerCase().includes(searchTerm) || 
+          formatDateForDisplay(e.date).toLowerCase().includes(searchTerm) ||
+          e.date.toLowerCase().includes(searchTerm) ||
+          e.season.toLowerCase().includes(searchTerm)
+        );
+      }
+      
+      currentFilteredEntries = filtered;
+      renderData(currentFilteredEntries); // Call the main render router
+      closeFilterModal();
+    };
+
+    /**
+     * Resets only the date filter inputs.
+     */
+    window.resetDateFilters = () => {
+      modalStartDateInput.value = "";
+      modalEndDateInput.value = "";
+      applyFilters();
+    };
+
+    /**
+     * Resets all filters and view mode.
+     */
+    window.resetAllFilters = () => {
+      searchInput.value = "";
+      modalStartDateInput.value = "";
+      modalEndDateInput.value = "";
+      selectedEntries.clear();
+      updateDeleteSelectedButton();
+      
+      // Reset view to default 'cards'
+      viewMode = 'cards';
+      toggleViewBtn.innerHTML = `<i class="fas fa-list"></i> View as Table`;
+      
+      applyFilters(); // Re-apply (which will render all data in card view)
+    };
+
+    /**
+     * Filters by a specific date (from duplicate info click).
+     */
+    window.filterBySpecificDate = (date) => {
+      searchInput.value = "";
+      modalStartDateInput.value = date;
+      modalEndDateInput.value = date;
+      applyFilters();
+    };
+
+
+    // Event listener for real-time text search
+    searchInput.addEventListener("input", applyFilters);
+
+    /**
+     * Downloads data as an Excel file (unchanged).
+     */
+    window.downloadExcel = () => {
+      if (currentFilteredEntries.length === 0) {
+        showMessageBox("No data to download.");
+        return;
+      }
+      const exportData = currentFilteredEntries.map(({ id, ...rest }) => ({
+          ...rest,
+          date: formatDateForDisplay(rest.date)
+      }));
+      
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(exportData);
+      XLSX.utils.book_append_sheet(wb, ws, "annapoorna_poster1");
+      XLSX.writeFile(wb, "posters.xlsx");
+    };
+
+    // PDF Download function REMOVED
+
+    // Initial data load
+    loadData();
+  </script>
+</body>
+</html>

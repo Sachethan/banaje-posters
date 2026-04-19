@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Your Account - Minimalist</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+:root {
+  --text: #222;
+  --bg: #f7fafc;
+  --accent: #764ba2;
+  --card-bg: #fff;
+  --section-bg: #fff;
+  --text: #111;
+  --accent: #007bff;
+  --accent-hover: #0056b3;
+  --input-bg: #f9f9f9;
+  --input-border: #ccc;
+  --dbg: #fff;
+  --logout: #d00;
+}
+body.dark {
+  --box: #121212;
+  --text: #eee;
+  --bg: #121212;
+  --card-bg: #1e1e1e;
+  --section-bg: #111;
+  --text: #fff;
+  --input-bg: #222;
+  --input-border: #555;
+  --dbg: #121212;
+  --logout: #007bff;
+}
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+ /* Light gray background */
+        }
+        .form-container {
+            background-color: var(--card-bg);
+            padding: 2.5rem 3rem; /* Increased padding */
+            border-radius: 1rem; /* More rounded corners */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            width: 400px;
+            max-width: 420px; /* Slightly wider */
+            transition: all 0.3s ease-in-out;
+            position: relative; /* Added for absolute positioning of children like the close icon */
+        }
+        .form-title {
+            font-size: 2rem; /* Larger title */
+            font-weight: 700;
+            color: var(--text); /* Darker gray */
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .input-group {
+            position: relative;
+            margin-bottom: 1.75rem; /* Increased spacing */
+        }
+        .form-input {
+            width: 100%;
+            margin: 0;
+            padding: 0.875rem 1rem; /* Adjusted padding */
+            border: 1px solid #e2e8f0; /* Lighter border */
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+            color: var(--text);
+            background-color: var(--input-bg); /* Slightly off-white input background */
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #4f46e5; /* Indigo accent */
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+        .form-label { /* Floating label style */
+            position: absolute;
+            left: 1rem;
+            top: 0.875rem;
+            font-size: 0.95rem;
+            color: #718096; /* Medium gray */
+            pointer-events: none;
+            transition: all 0.2s ease-in-out;
+            background-color: var(--input-bg); /* Match input bg for smooth float */
+            padding: 0 0.25rem;
+        }
+        .form-input:focus + .form-label,
+        .form-input:not(:placeholder-shown) + .form-label {
+            top: -0.6rem;
+            left: 0.75rem;
+            font-size: 0.75rem;
+            color: #4f46e5; /* Indigo accent on focus/filled */
+        }
+        .form-button {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffffff;
+            background-color: #4f46e5; /* Indigo */
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease;
+        }
+        .form-button:hover {
+            background-color: #4338ca; /* Darker Indigo */
+        }
+        .form-button:active {
+            transform: translateY(1px);
+        }
+        .switch-form-text {
+            font-size: 0.875rem;
+            color: var(--text); /* Darker gray for text */
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        .switch-form-button {
+            font-weight: 600;
+            color: #4f46e5; /* Indigo */
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .switch-form-button:hover {
+            color: #3730a3; /* Darker Indigo */
+        }
+        /* Added for Forgot Password link */
+        .forgot-password-link {
+            display: block;
+            text-align: right;
+            font-size: 0.8rem;
+            color: #4f46e5;
+            margin-top: -0.75rem; /* Pull it up closer to password field */
+            margin-bottom: 1.25rem;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        .forgot-password-link:hover {
+            color: #3730a3;
+        }
+
+        .message-box {
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            margin-bottom: 1.25rem;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .message-box.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .success-message {
+            background-color: #d1fae5; /* Lighter green */
+            color: #065f46; /* Darker green */
+            border: 1px solid #6ee7b7;
+        }
+        .error-message {
+            background-color: #fee2e2; /* Lighter red */
+            color: #991b1b; /* Darker red */
+            border: 1px solid #fca5a5;
+        }
+        .email-status-message {
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            margin-left: 0.25rem;
+            height: 1rem; /* Reserve space to prevent layout shift */
+        }
+        .hidden-form {
+            display: none;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+        }
+        .visible-form {
+            display: block;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Close icon styles */
+        .close-icon {
+            position: absolute;
+            background: none;
+            border: none;
+            padding: 0.5rem; /* Makes it easier to click */
+            cursor: pointer;
+            line-height: 1;
+            z-index: 10; /* Ensure its above other elements if needed */
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        .close-icon svg {
+            width: 1.25rem; /* 20px */
+            height: 1.25rem; /* 20px */
+            stroke: #718096; /* Medium gray, matching form-label color */
+            transition: stroke 0.2s ease;
+        }
+
+        .close-icon:hover svg {
+            stroke: #4f46e5; /* Indigo accent on hover */
+        }
+        .close-icon:active {
+            transform: scale(0.9);
+        }
+
+        .close-icon-top-right {
+            top: 1rem;  /* Adjust as needed, considering form padding */
+            right: 1rem; /* Adjust as needed, considering form padding */
+        }
+
+        .close-icon-top-left {
+            top: 1rem;  /* Adjust as needed */
+            left: 1rem; /* Adjust as needed */
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen px-4 py-8"> <main>
+        <div id="loginFormContainer" class="form-container visible-form">
+            <button onclick="window.location.href='../../index.html';" class="close-icon close-icon-top-right" aria-label="Close login form">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <h1 id="themeToggle" class="form-title">Sign In</h1>
+            <div id="loginMessage" class="message-box"></div>
+            <form id="loginForm" novalidate>
+                <div class="input-group">
+                    <input type="email" id="loginEmail" class="form-input" placeholder=" " required>
+                    <label for="loginEmail" class="form-label">Email Address</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="loginPassword" class="form-input" placeholder=" " required>
+                    <label for="loginPassword" class="form-label">Password</label>
+                </div>
+                <a id="showForgotPasswordBtn" class="forgot-password-link">Forgot Password?</a>
+                <button type="submit" class="form-button">Login</button>
+            </form>
+            <p class="switch-form-text">
+                New here? <button id="showRegisterBtn" class="switch-form-button">Create an account</button>
+            </p>
+        </div>
+
+        <div id="registerFormContainer" class="form-container hidden-form">
+            <button onclick="window.location.href='../../index.html';" class="close-icon close-icon-top-right" aria-label="Close registration form">
+                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <h1 class="form-title">Create Account</h1>
+            <div id="registerMessage" class="message-box"></div>
+            <form id="registerForm" novalidate>
+                <div class="input-group">
+                    <input type="text" id="registerName" class="form-input" placeholder=" " required>
+                    <label for="registerName" class="form-label">Full Name</label>
+                </div>
+                <div class="input-group">
+                    <input type="email" id="registerEmail" class="form-input" placeholder=" " required>
+                    <label for="registerEmail" class="form-label">Email Address</label>
+                    <p id="emailStatus" class="email-status-message"></p>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="registerPassword" class="form-input" placeholder=" " required minlength="6">
+                    <label for="registerPassword" class="form-label">Password (min. 6 characters)</label>
+                </div>
+                 <div class="input-group">
+                    <input type="password" id="registerConfirmPassword" class="form-input" placeholder=" " required>
+                    <label for="registerConfirmPassword" class="form-label">Confirm Password</label>
+                </div>
+                <button type="submit" class="form-button">Register</button>
+            </form>
+            <p class="switch-form-text">
+                Already have an account? <button id="showLoginBtn" class="switch-form-button">Sign in</button>
+            </p>
+        </div>
+
+        <!-- New Forgot Password Form -->
+        <div id="forgotPasswordFormContainer" class="form-container hidden-form">
+            <button onclick="window.location.href='../../index.html';" class="close-icon close-icon-top-right" aria-label="Close forgot password form">
+                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <h1 class="form-title">Reset Password</h1>
+            <div id="forgotPasswordMessage" class="message-box"></div>
+            <form id="forgotPasswordForm" novalidate>
+                <p class="text-sm text-gray-600 mb-4 text-center dark:text-gray-300">Enter your email and we'll send you a link to reset your password.</p>
+                <div class="input-group">
+                    <input type="email" id="forgotPasswordEmail" class="form-input" placeholder=" " required>
+                    <label for="forgotPasswordEmail" class="form-label">Email Address</label>
+                </div>
+                <button type="submit" class="form-button">Send Reset Link</button>
+            </form>
+            <p class="switch-form-text">
+                Remembered your password? <button id="showLoginFromForgotBtn" class="switch-form-button">Back to Sign In</button>
+            </p>
+        </div>
+    </main>
+
+        <script type="module" src="login.js"></script>
+
+</body>
+</html>
