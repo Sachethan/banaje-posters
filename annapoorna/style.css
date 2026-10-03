@@ -5,7 +5,7 @@
     .aspect-ratio-box {
       position: relative;
       width: 100%;
-      padding-top: 125%; /* 4:5 aspect */
+      padding-top: 125%; /* 4:5 aspect*/
     }
 
     #invitation-card {
@@ -14,7 +14,7 @@
       width: 100%;
       height: 100%;
       display: flex;
-      background-image: url('image/bg.jpg');
+      background-image: url('image/bg.webp');
       background-size: cover;
       flex-direction: column;
      /* container-type: inline-size;*/
@@ -55,7 +55,7 @@
 }
  .Header-cust{
     margin-bottom: 40px;
-    margin-top: 15px;
+    margin-top: 20px;
     font-size: 6px; 
   }
 
@@ -128,7 +128,8 @@ margin-bottom: 5px;
             opacity: 1;
         }
 
-  #loadimg {
+  #loadimg {
+
     top: 0;
     left: 0;
     width: 100%;
