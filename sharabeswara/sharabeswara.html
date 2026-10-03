@@ -82,6 +82,11 @@
    <div class="w-full mt-0 max-w-md">
         <!-- Controls Container -->
         <div class="bg-slate-800/80 backdrop-blur-sm p-3 rounded-xl shadow-lg flex justify-center items-center gap-4 border border-slate-700">
+            
+          <button id="bg-toggle-button" title="Change Background" class="flex items-center gap-2 px-5 py-2 pt-2 text-[20px] font-medium text-slate-200 bg-slate-700 rounded-lg hover:bg-slate-600 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800 focus-visible:ring-sky-400">
+        <i class="fa-solid fa-image"></i>
+    </button>
+
             <!-- Secondary Button: "Change Font" -->
             <button id="font-modal-button" class="flex items-center gap-2 px-5 py-2 pt-2 text-[20px] font-medium text-slate-200 bg-slate-700 rounded-lg hover:bg-slate-600 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800 focus-visible:ring-sky-400">
               <i class="fa-solid fa-font"></i>
@@ -293,6 +298,28 @@
       }, 2000);
     }
   });
+
+// Background images config in JSON format
+  const bgConfig = {
+    "bimage1": "image/bg.webp",
+    "bimage2": "image/bg2.webp"
+  };
+
+  const bgKeys = Object.keys(bgConfig);
+  let currentBgIndex = 1; // 0 for bimage1, 1 for bimage2 (since bg2.webp is default)
+
+  const bgToggleButton = document.getElementById('bg-toggle-button');
+
+  bgToggleButton.addEventListener('click', () => {
+    // Cycle to next image key
+    currentBgIndex = (currentBgIndex + 1) % bgKeys.length;
+    const selectedKey = bgKeys[currentBgIndex];
+    const newBgUrl = bgConfig[selectedKey];
+
+    // Update the poster background image
+    invitationCard.style.backgroundImage = `url('${newBgUrl}')`;
+  });
+
 </script>
 
 </body>
