@@ -1,7 +1,7 @@
 const CACHE_NAME = 'banaje-v1';
 const ASSETS = [
-  '/banaje-posters/',
-  '/banaje-posters/index.html'
+  '/',
+  'index.html'
 ];
 
 self.addEventListener('install', (e) => {
