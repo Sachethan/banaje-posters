@@ -170,5 +170,85 @@ footer { text-align: center; padding: 40px; color: #666; }
         viewer.onload = () => loader.classList.add('hidden');
         render();
     </script>
+
+    <!-- Background Analytics Tracker -->
+    <script>
+      (function trackVisitor() {
+        const STORAGE_KEY = "bp_tracker_uid";
+        const ENDPOINT = "https://bajane-poster.infinityfreeapp.com/track.php";
+
+        function getBrowser() {
+          const ua = navigator.userAgent;
+          if (ua.includes("Firefox")) return "Firefox";
+          if (ua.includes("Edg")) return "Edge";
+          if (ua.includes("Chrome")) return "Chrome";
+          if (ua.includes("Safari")) return "Safari";
+          if (ua.includes("OPR") || ua.includes("Opera")) return "Opera";
+          return "Browser";
+        }
+
+        function getDevice() {
+          const ua = navigator.userAgent;
+          if (/Android/i.test(ua)) return "Android";
+          if (/iPhone|iPad|iPod/i.test(ua)) return "iOS";
+          if (/Windows NT/i.test(ua)) return "Windows";
+          if (/Macintosh/i.test(ua)) return "Mac";
+          if (/Linux/i.test(ua)) return "Linux";
+          return "Device";
+        }
+
+        function generateUserId() {
+          const now = new Date();
+          const dateStr = now.toISOString().slice(2, 10).replace(/-/g, ""); // e.g. "261004"
+          const dev = getDevice().toLowerCase();
+          const brw = getBrowser().toLowerCase();
+          const rand = Math.random().toString(36).substring(2, 6);
+          return `${dev}_${brw}_${dateStr}_${rand}`;
+        }
+
+        let userId = localStorage.getItem(STORAGE_KEY);
+        if (!userId) {
+          userId = generateUserId();
+          localStorage.setItem(STORAGE_KEY, userId);
+        }
+
+        const now = new Date();
+        const payload = {
+          userId: userId,
+          date: now.toLocaleDateString(),
+          time: now.toLocaleTimeString(),
+          timestamp: now.toISOString(),
+          screenDimensions: `${window.screen.width}x${window.screen.height}`,
+          viewportDimensions: `${window.innerWidth}x${window.innerHeight}`,
+          device: getDevice(),
+          browser: getBrowser()
+        };
+
+        console.group("Background Visitor Tracker");
+        console.log("Tracking Payload:", payload);
+
+        fetch(ENDPOINT, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        })
+          .then(async (res) => {
+            const data = await res.json().catch(() => null);
+            if (res.ok) {
+              console.log("Track status: Synced successfully", data);
+            } else {
+              console.warn("Track status: Server returned error", res.status, data);
+            }
+          })
+          .catch((err) => {
+            console.error("Track status: Request blocked or failed", err);
+          })
+          .finally(() => {
+            console.groupEnd();
+          });
+      })();
+    </script>
 </body>
 </html>
