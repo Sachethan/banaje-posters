@@ -89,6 +89,10 @@ footer { text-align: center; padding: 40px; color: #666; }
             <div class="flex items-center gap-4">
                 <div id="branding-container">
                     <h1 class="text-sm font-bold text-white">Bhajane <span class="text-gradient">Templates</span></h1>
+                    <div class="text-[10px] text-slate-400 font-mono tracking-wider flex items-center gap-1 mt-0.5">
+                        <span>ID:</span>
+                        <span id="display-user-id" class="text-indigo-400 font-semibold bg-slate-800/80 px-1.5 py-0.5 rounded border border-slate-700/60 leading-none">Loading...</span>
+                    </div>
                 </div>
             </div>
             <div id="editor-nav" class="hidden text-xs bg-slate-800/50 px-3 py-1.5 rounded-full border border-slate-700">
@@ -97,9 +101,9 @@ footer { text-align: center; padding: 40px; color: #666; }
            <button id="back-to-gallery-btn" class="hidden m-4 items-center gap-2 px-3 py-1.5 bg-slate-800 text-slate-300 text-sm rounded-lg border border-slate-700">
            Back
            </button>
-                   <div class="text-xs">
-        <span class="text-indigo-400 font-semibold ml-1">SSC.</span>
-        </div>
+           <div class="text-xs">
+               <span class="text-indigo-400 font-semibold ml-1">SSC.</span>
+           </div>
         </div>
 
     </header>
@@ -171,84 +175,117 @@ footer { text-align: center; padding: 40px; color: #666; }
         render();
     </script>
 
-    <!-- Background Analytics Tracker -->
-    <script>
-      (function trackVisitor() {
-        const STORAGE_KEY = "bp_tracker_uid";
-        const ENDPOINT = "https://bajane-poster.infinityfreeapp.com/track.php";
+<!-- Background Telemetry Script -->
+<script>
+(function() {
+  const SPREADSHEET_ID = "11VJ9sxd6MC8zcEBMvKMeuztG-zAaFGt7eI7IwdPS5JI";
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwkCSWw1-XIAmPNkUfQWlJpeClq1rjuZ-40G7DmMFfxUfWgmCJm6wdqyZUTlJeOoJEmZw/exec";
 
-        function getBrowser() {
-          const ua = navigator.userAgent;
-          if (ua.includes("Firefox")) return "Firefox";
-          if (ua.includes("Edg")) return "Edge";
-          if (ua.includes("Chrome")) return "Chrome";
-          if (ua.includes("Safari")) return "Safari";
-          if (ua.includes("OPR") || ua.includes("Opera")) return "Opera";
-          return "Browser";
-        }
+  function getDeviceAndBrowser() {
+    const ua = navigator.userAgent;
+    let browser = "Browser";
+    let device = "Device";
 
-        function getDevice() {
-          const ua = navigator.userAgent;
-          if (/Android/i.test(ua)) return "Android";
-          if (/iPhone|iPad|iPod/i.test(ua)) return "iOS";
-          if (/Windows NT/i.test(ua)) return "Windows";
-          if (/Macintosh/i.test(ua)) return "Mac";
-          if (/Linux/i.test(ua)) return "Linux";
-          return "Device";
-        }
+    if (ua.includes("Firefox/")) browser = "Firefox";
+    else if (ua.includes("Edg/")) browser = "Edge";
+    else if (ua.includes("Chrome/")) browser = "Chrome";
+    else if (ua.includes("Safari/")) browser = "Safari";
 
-        function generateUserId() {
-          const now = new Date();
-          const dateStr = now.toISOString().slice(2, 10).replace(/-/g, ""); // e.g. "261004"
-          const dev = getDevice().toLowerCase();
-          const brw = getBrowser().toLowerCase();
-          const rand = Math.random().toString(36).substring(2, 6);
-          return `${dev}_${brw}_${dateStr}_${rand}`;
-        }
+    if (/android/i.test(ua)) device = "Android";
+    else if (/iPad|iPhone|iPod/.test(ua)) device = "iOS";
+    else if (/Win/i.test(ua)) device = "Windows";
+    else if (/Mac/i.test(ua)) device = "Mac";
+    else if (/Linux/i.test(ua)) device = "Linux";
 
-        let userId = localStorage.getItem(STORAGE_KEY);
-        if (!userId) {
-          userId = generateUserId();
-          localStorage.setItem(STORAGE_KEY, userId);
-        }
+    return { device, browser };
+  }
 
-        const now = new Date();
-        const payload = {
-          userId: userId,
-          date: now.toLocaleDateString(),
-          time: now.toLocaleTimeString(),
-          timestamp: now.toISOString(),
-          screenDimensions: `${window.screen.width}x${window.screen.height}`,
-          viewportDimensions: `${window.innerWidth}x${window.innerHeight}`,
-          device: getDevice(),
-          browser: getBrowser()
-        };
+  function getFormattedDateTime() {
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = now.getMonth() + 1;
+    const dateStr = `${day}-${month}`;
 
-        console.group("Background Visitor Tracker");
-        console.log("Tracking Payload:", payload);
+    let hours = now.getHours();
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    const timeStr = `${String(hours).padStart(2, '0')}:${minutes} ${ampm}`;
 
-        fetch(ENDPOINT, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(payload)
-        })
-          .then(async (res) => {
-            const data = await res.json().catch(() => null);
-            if (res.ok) {
-              console.log("Track status: Synced successfully", data);
-            } else {
-              console.warn("Track status: Server returned error", res.status, data);
-            }
-          })
-          .catch((err) => {
-            console.error("Track status: Request blocked or failed", err);
-          })
-          .finally(() => {
-            console.groupEnd();
-          });
-      })();
-    </script>
+    return { date: dateStr, time: timeStr, fullYear: now.getFullYear() };
+  }
+
+  function getOrCreateUserId() {
+    let uid = localStorage.getItem("app_user_id");
+    if (!uid || uid.length !== 5) {
+      const { device, browser } = getDeviceAndBrowser();
+      const { date, fullYear } = getFormattedDateTime();
+      const randomSeed = Math.random().toString(36).substring(2);
+
+      const rawSeed = `${device}${browser}${date}${fullYear}${randomSeed}`;
+      
+      let hash = 0;
+      for (let i = 0; i < rawSeed.length; i++) {
+        hash = (Math.imul(31, hash) + rawSeed.charCodeAt(i)) >>> 0;
+      }
+
+      const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      let shortCode = "";
+      while (shortCode.length < 5) {
+        shortCode += chars[hash % chars.length];
+        hash = Math.floor(hash / chars.length) ^ (Math.random() * 1000 | 0);
+      }
+
+      uid = shortCode.slice(0, 5);
+      localStorage.setItem("app_user_id", uid);
+    }
+    return uid;
+  }
+
+  function trackVisit() {
+    const userId = getOrCreateUserId();
+
+    // Display the 5-char User ID in UI
+    const idEl = document.getElementById("display-user-id");
+    if (idEl) idEl.textContent = userId;
+
+    const { date, time } = getFormattedDateTime();
+    const screenRes = `${window.screen.width}x${window.screen.height}`;
+
+    const payload = {
+      spreadsheetId: SPREADSHEET_ID,
+      userId: userId,
+      date: date,
+      time: time,
+      screen: screenRes,
+      platform: navigator.platform || "Unknown",
+      userAgent: navigator.userAgent
+    };
+
+    console.group("Telemetry Tracker");
+    console.log("User ID (5-char):", payload.userId);
+    console.log("Visit Date:", payload.date);
+    console.log("Visit Time:", payload.time);
+    console.log("Screen Dimension:", payload.screen);
+    console.log("Payload:", payload);
+    console.groupEnd();
+
+    if (navigator.sendBeacon) {
+      const blob = new Blob([JSON.stringify(payload)], { type: "text/plain" });
+      navigator.sendBeacon(APPS_SCRIPT_URL, blob);
+    } else {
+      fetch(APPS_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify(payload)
+      }).catch(err => console.warn("Tracker fetch failed silently:", err));
+    }
+  }
+
+  window.addEventListener("DOMContentLoaded", trackVisit);
+})();
+</script>
 </body>
 </html>
