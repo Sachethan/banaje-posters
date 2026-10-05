@@ -68,14 +68,13 @@ footer { text-align: center; padding: 40px; color: #666; }
 
 /* Hiding the Iframe Scrollbar via Clipping */
 #iframe-container {
-    overflow: hidden; /* This acts as a mask */
+    overflow: hidden;
     position: absolute;
     inset: 0;
     z-index: 40;
 }
 
 #viewer {
-    /* Push the scrollbar 20px off-screen to the right */
     width: calc(100% + 20px); 
     height: 100%;
     border: none;
@@ -91,7 +90,10 @@ footer { text-align: center; padding: 40px; color: #666; }
                     <h1 class="text-sm font-bold text-white">Bhajane <span class="text-gradient">Templates</span></h1>
                     <div class="text-[10px] text-slate-400 font-mono tracking-wider flex items-center gap-1 mt-0.5">
                         <span>ID:</span>
-                        <span id="display-user-id" class="text-indigo-400 font-semibold bg-slate-800/80 px-1.5 py-0.5 rounded border border-slate-700/60 leading-none">Loading...</span>
+                        <button id="user-id-btn" title="Click to rename" class="group flex items-center gap-1 text-indigo-400 font-semibold bg-slate-800/80 hover:bg-slate-700/80 px-1.5 py-0.5 rounded border border-slate-700/60 leading-none transition">
+                            <span id="display-user-id">Loading...</span>
+                            <svg class="w-2.5 h-2.5 opacity-60 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -126,6 +128,26 @@ footer { text-align: center; padding: 40px; color: #666; }
         </div>
     </main>
 <footer>&copy; 2026 Sachethan Salian Creation</footer>
+
+    <!-- Rename User ID Modal -->
+    <div id="rename-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 hidden">
+        <div class="bg-dark-800 border border-slate-700 rounded-xl p-5 max-w-xs w-full shadow-2xl">
+            <h3 class="text-sm font-semibold text-white mb-1">Rename User ID</h3>
+            <p class="text-xs text-slate-400 mb-3">Updating will change your local user profile name.</p>
+            <input 
+                type="text" 
+                id="rename-input" 
+                maxlength="20"
+                class="w-full px-3 py-2 bg-dark-900 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:border-indigo-500 font-mono tracking-wide mb-4 placeholder-slate-500" 
+                placeholder="Enter new name" 
+            />
+            <div class="flex items-center justify-end gap-2 text-xs">
+                <button id="cancel-rename-btn" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition">Cancel</button>
+                <button id="save-rename-btn" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-semibold transition active:scale-95">Save</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const templates = [
             { id: '1', title: 'ಅನ್ನಪೂರ್ಣ ಆಶೀರ್ವಾದ', previewImage: 'annapoorna/image/preview.webp', url: 'annapoorna/annapoorna1.html' },
@@ -175,7 +197,7 @@ footer { text-align: center; padding: 40px; color: #666; }
         render();
     </script>
 
-<!-- Background Telemetry Script -->
+<!-- Background Telemetry & ID Manager Script -->
 <script>
 (function() {
   const SPREADSHEET_ID = "11VJ9sxd6MC8zcEBMvKMeuztG-zAaFGt7eI7IwdPS5JI";
@@ -218,13 +240,12 @@ footer { text-align: center; padding: 40px; color: #666; }
 
   function getOrCreateUserId() {
     let uid = localStorage.getItem("app_user_id");
-    if (!uid || uid.length !== 5) {
+    if (!uid) {
       const { device, browser } = getDeviceAndBrowser();
       const { date, fullYear } = getFormattedDateTime();
       const randomSeed = Math.random().toString(36).substring(2);
 
       const rawSeed = `${device}${browser}${date}${fullYear}${randomSeed}`;
-      
       let hash = 0;
       for (let i = 0; i < rawSeed.length; i++) {
         hash = (Math.imul(31, hash) + rawSeed.charCodeAt(i)) >>> 0;
@@ -243,10 +264,9 @@ footer { text-align: center; padding: 40px; color: #666; }
     return uid;
   }
 
-  function trackVisit() {
-    const userId = getOrCreateUserId();
+  function trackVisit(customId) {
+    const userId = customId || getOrCreateUserId();
 
-    // Display the 5-char User ID in UI
     const idEl = document.getElementById("display-user-id");
     if (idEl) idEl.textContent = userId;
 
@@ -264,7 +284,7 @@ footer { text-align: center; padding: 40px; color: #666; }
     };
 
     console.group("Telemetry Tracker");
-    console.log("User ID (5-char):", payload.userId);
+    console.log("User ID:", payload.userId);
     console.log("Visit Date:", payload.date);
     console.log("Visit Time:", payload.time);
     console.log("Screen Dimension:", payload.screen);
@@ -284,7 +304,47 @@ footer { text-align: center; padding: 40px; color: #666; }
     }
   }
 
-  window.addEventListener("DOMContentLoaded", trackVisit);
+  // Rename Dialog Setup
+  function setupRenameModal() {
+    const userIdBtn = document.getElementById("user-id-btn");
+    const modal = document.getElementById("rename-modal");
+    const input = document.getElementById("rename-input");
+    const cancelBtn = document.getElementById("cancel-rename-btn");
+    const saveBtn = document.getElementById("save-rename-btn");
+    const idEl = document.getElementById("display-user-id");
+
+    if (!userIdBtn || !modal || !input) return;
+
+    userIdBtn.addEventListener("click", () => {
+      input.value = localStorage.getItem("app_user_id") || idEl.textContent;
+      modal.classList.remove("hidden");
+      input.focus();
+    });
+
+    cancelBtn.addEventListener("click", () => {
+      modal.classList.add("hidden");
+    });
+
+    saveBtn.addEventListener("click", () => {
+      const newName = input.value.trim().replace(/[^a-zA-Z0-9_-]/g, "");
+      if (newName) {
+        localStorage.setItem("app_user_id", newName);
+        idEl.textContent = newName;
+        modal.classList.add("hidden");
+        // Log an immediate entry with the new name
+        trackVisit(newName);
+      }
+    });
+
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) modal.classList.add("hidden");
+    });
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    trackVisit();
+    setupRenameModal();
+  });
 })();
 </script>
 </body>
