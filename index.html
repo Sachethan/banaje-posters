@@ -64,7 +64,24 @@ body {
     background-image: linear-gradient(to right, #818cf8, #c084fc, #22d3ee); 
 }
 
-footer { text-align: center; padding: 20px; color: #666; }
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid rgba(51, 65, 85, 0.6);
+    color: #94a3b8;
+    font-size: 12px;
+    z-index: 30;
+    padding: 0 16px;
+}
+
 
 /* Hiding the Iframe Scrollbar via Clipping */
 #iframe-container {
@@ -87,7 +104,7 @@ footer { text-align: center; padding: 20px; color: #666; }
         <div class="max-w-7xl mx-auto px-4 h-full flex items-center justify-between relative">
             <div class="flex items-center gap-4">
                 <div id="branding-container">
-                    <h1 class="text-sm font-bold text-white">Bhajane <span class="text-gradient">Templates</span></h1>
+                    <h1 class="text-sm font-bold text-white">Bhajane <span class="text-gradient">Posters</span></h1>
                     <div class="text-[10px] text-slate-400 font-mono tracking-wider flex items-center gap-1 mt-0.5">
                         <span>ID:</span>
                         <button type="button" id="user-id-btn" title="Click to rename" class="group flex items-center gap-1 text-indigo-400 font-semibold bg-slate-800/80 hover:bg-slate-700/80 px-1.5 py-0.5 rounded border border-slate-700/60 leading-none transition cursor-pointer">
@@ -129,7 +146,6 @@ footer { text-align: center; padding: 20px; color: #666; }
         </div>
     </main>
     <footer>&copy; 2026 Sachethan Salian Creation</footer>
-
     <!-- Rename User ID Modal -->
     <div id="rename-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 hidden">
         <div class="bg-dark-800 border border-slate-700 rounded-xl p-5 max-w-xs w-full shadow-2xl">
