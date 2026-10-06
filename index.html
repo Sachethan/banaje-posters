@@ -64,7 +64,7 @@ body {
     background-image: linear-gradient(to right, #818cf8, #c084fc, #22d3ee); 
 }
 
-footer { text-align: center; padding: 40px; color: #666; }
+footer { text-align: center; padding: 20px; color: #666; }
 
 /* Hiding the Iframe Scrollbar via Clipping */
 #iframe-container {
@@ -90,7 +90,7 @@ footer { text-align: center; padding: 40px; color: #666; }
                     <h1 class="text-sm font-bold text-white">Bhajane <span class="text-gradient">Templates</span></h1>
                     <div class="text-[10px] text-slate-400 font-mono tracking-wider flex items-center gap-1 mt-0.5">
                         <span>ID:</span>
-                        <button id="user-id-btn" title="Click to rename" class="group flex items-center gap-1 text-indigo-400 font-semibold bg-slate-800/80 hover:bg-slate-700/80 px-1.5 py-0.5 rounded border border-slate-700/60 leading-none transition">
+                        <button type="button" id="user-id-btn" title="Click to rename" class="group flex items-center gap-1 text-indigo-400 font-semibold bg-slate-800/80 hover:bg-slate-700/80 px-1.5 py-0.5 rounded border border-slate-700/60 leading-none transition cursor-pointer">
                             <span id="display-user-id">Loading...</span>
                             <svg class="w-2.5 h-2.5 opacity-60 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                         </button>
@@ -100,14 +100,15 @@ footer { text-align: center; padding: 40px; color: #666; }
             <div id="editor-nav" class="hidden text-xs bg-slate-800/50 px-3 py-1.5 rounded-full border border-slate-700">
                 <span id="template-breadcrumb" class="text-indigo-400 font-semibold ml-1 tracking-wide inline-block align-bottom truncate max-w-[50px]">Untitled</span>
             </div>
-           <button id="back-to-gallery-btn" class="hidden m-4 items-center gap-2 px-3 py-1.5 bg-slate-800 text-slate-300 text-sm rounded-lg border border-slate-700">
+           <button id="back-to-gallery-btn" class="hidden m-4 items-center gap-2 px-3 py-1.5 bg-slate-800 text-slate-300 text-sm rounded-lg border border-slate-700 cursor-pointer hover:bg-slate-700 transition">
            Back
            </button>
            <div class="text-xs">
-               <span class="text-indigo-400 font-semibold ml-1">SSC.</span>
+               <button type="button" id="ssc-update-btn" title="Check for Updates" class="text-indigo-400 font-semibold hover:text-indigo-300 px-2 py-1 rounded hover:bg-slate-800 border border-transparent hover:border-slate-700 transition cursor-pointer">
+                   Update
+               </button>
            </div>
         </div>
-
     </header>
 
     <main class="flex-grow relative overflow-hidden bg-gradient-to-br from-dark-900 to-slate-900">
@@ -118,7 +119,7 @@ footer { text-align: center; padding: 40px; color: #666; }
         </div>
 
         <div id="iframe-container" class="hidden absolute inset-0 bg-dark-900 z-40">
-            <div id="loading-overlay" class="absolute inset-0 bg-dark-900/95 flex items-center justify-center z-50">
+            <div id="loading-overlay" class="hidden absolute inset-0 bg-dark-900/95 flex items-center justify-center z-50">
                 <div class="flex flex-col items-center">
                     <div class="spinner mb-4"></div>
                     <p class="text-slate-300 animate-pulse">Opening Editor...</p>
@@ -127,10 +128,10 @@ footer { text-align: center; padding: 40px; color: #666; }
             <iframe id="viewer" src="about:blank" class="w-full h-full border-0"></iframe>
         </div>
     </main>
-<footer>&copy; 2026 Sachethan Salian Creation</footer>
+    <footer>&copy; 2026 Sachethan Salian Creation</footer>
 
     <!-- Rename User ID Modal -->
-    <div id="rename-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 hidden">
+    <div id="rename-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 hidden">
         <div class="bg-dark-800 border border-slate-700 rounded-xl p-5 max-w-xs w-full shadow-2xl">
             <h3 class="text-sm font-semibold text-white mb-1">Rename User ID</h3>
             <p class="text-xs text-slate-400 mb-3">Updating will change your local user profile name.</p>
@@ -142,12 +143,30 @@ footer { text-align: center; padding: 40px; color: #666; }
                 placeholder="Enter new name" 
             />
             <div class="flex items-center justify-end gap-2 text-xs">
-                <button id="cancel-rename-btn" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition">Cancel</button>
-                <button id="save-rename-btn" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-semibold transition active:scale-95">Save</button>
+                <button type="button" id="cancel-rename-btn" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition">Cancel</button>
+                <button type="button" id="save-rename-btn" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-semibold transition active:scale-95">Save</button>
             </div>
         </div>
     </div>
 
+    <!-- SSC Update Confirmation Modal -->
+    <div id="update-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 hidden">
+        <div class="bg-dark-800 border border-slate-700 rounded-xl p-6 max-w-sm w-full shadow-2xl">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold">↻</div>
+                <h3 class="text-base font-semibold text-white">App Update Available</h3>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                Do you want to update the app? This will purge all old cached files, download the latest index & templates freshly, while preserving your current <strong class="text-indigo-400">User ID</strong>.
+            </p>
+            <div class="flex items-center justify-end gap-2.5 text-xs">
+                <button type="button" id="cancel-update-btn" class="px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition cursor-pointer">Cancel</button>
+                <button type="button" id="confirm-update-btn" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-semibold transition cursor-pointer active:scale-95">Update Now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main UI & Viewer Logic -->
     <script>
         const templates = [
             { id: '1', title: 'ಅನ್ನಪೂರ್ಣ ಆಶೀರ್ವಾದ', previewImage: 'annapoorna/image/preview.webp', url: 'annapoorna/annapoorna1.html' },
@@ -163,17 +182,31 @@ footer { text-align: center; padding: 40px; color: #666; }
         const nav = document.getElementById('editor-nav');
         const breadcrumb = document.getElementById('template-breadcrumb');
 
+        let loaderTimeout = null;
+
+        function hideLoader() {
+            if (loader) loader.classList.add('hidden');
+            if (loaderTimeout) clearTimeout(loaderTimeout);
+        }
+
+        function showLoader() {
+            if (loader) loader.classList.remove('hidden');
+            if (loaderTimeout) clearTimeout(loaderTimeout);
+            loaderTimeout = setTimeout(hideLoader, 2500);
+        }
+
         function render() {
+            grid.innerHTML = '';
             templates.forEach(t => {
                 const card = document.createElement('div');
                 card.className = 'template-card bg-dark-800 border border-slate-700 rounded-xl overflow-hidden cursor-pointer p-4';
                 card.innerHTML = `
                     <img src="${t.previewImage}" class="w-full h-40 object-cover rounded-lg mb-4" onerror="this.src='https://placehold.co/400x225/1e293b/6366f1?text=Template'">
                     <h3 class="text-white font-bold mb-3">${t.title}</h3>
-                    <button class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm font-semibold transition">Open Editor</button>
+                    <button type="button" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm font-semibold transition">Open Editor</button>
                 `;
                 card.onclick = () => {
-                    loader.classList.remove('hidden');
+                    showLoader();
                     selector.classList.add('hidden');
                     container.classList.remove('hidden');
                     backBtn.classList.remove('hidden');
@@ -187,165 +220,246 @@ footer { text-align: center; padding: 40px; color: #666; }
 
         backBtn.onclick = () => {
             viewer.src = 'about:blank';
+            hideLoader();
             selector.classList.remove('hidden');
             container.classList.add('hidden');
             backBtn.classList.add('hidden');
             nav.classList.add('hidden');
         };
 
-        viewer.onload = () => loader.classList.add('hidden');
+        viewer.addEventListener('load', hideLoader);
+        viewer.addEventListener('error', hideLoader);
         render();
     </script>
 
-<!-- Background Telemetry & ID Manager Script -->
-<script>
-(function() {
-  const SPREADSHEET_ID = "11VJ9sxd6MC8zcEBMvKMeuztG-zAaFGt7eI7IwdPS5JI";
-  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwkCSWw1-XIAmPNkUfQWlJpeClq1rjuZ-40G7DmMFfxUfWgmCJm6wdqyZUTlJeOoJEmZw/exec";
+    <!-- Background Telemetry & ID Management -->
+    <script>
+    (function() {
+      const SPREADSHEET_ID = "11VJ9sxd6MC8zcEBMvKMeuztG-zAaFGt7eI7IwdPS5JI";
+      const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwkCSWw1-XIAmPNkUfQWlJpeClq1rjuZ-40G7DmMFfxUfWgmCJm6wdqyZUTlJeOoJEmZw/exec";
 
-  function getDeviceAndBrowser() {
-    const ua = navigator.userAgent;
-    let browser = "Browser";
-    let device = "Device";
+      function getDeviceAndBrowser() {
+        const ua = navigator.userAgent;
+        let browser = "Browser";
+        let device = "Device";
 
-    if (ua.includes("Firefox/")) browser = "Firefox";
-    else if (ua.includes("Edg/")) browser = "Edge";
-    else if (ua.includes("Chrome/")) browser = "Chrome";
-    else if (ua.includes("Safari/")) browser = "Safari";
+        if (ua.includes("Firefox/")) browser = "Firefox";
+        else if (ua.includes("Edg/")) browser = "Edge";
+        else if (ua.includes("Chrome/")) browser = "Chrome";
+        else if (ua.includes("Safari/")) browser = "Safari";
 
-    if (/android/i.test(ua)) device = "Android";
-    else if (/iPad|iPhone|iPod/.test(ua)) device = "iOS";
-    else if (/Win/i.test(ua)) device = "Windows";
-    else if (/Mac/i.test(ua)) device = "Mac";
-    else if (/Linux/i.test(ua)) device = "Linux";
+        if (/android/i.test(ua)) device = "Android";
+        else if (/iPad|iPhone|iPod/.test(ua)) device = "iOS";
+        else if (/Win/i.test(ua)) device = "Windows";
+        else if (/Mac/i.test(ua)) device = "Mac";
+        else if (/Linux/i.test(ua)) device = "Linux";
 
-    return { device, browser };
-  }
-
-  function getFormattedDateTime() {
-    const now = new Date();
-    const day = String(now.getDate()).padStart(2, '0');
-    const month = now.getMonth() + 1;
-    const dateStr = `${day}-${month}`;
-
-    let hours = now.getHours();
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    const timeStr = `${String(hours).padStart(2, '0')}:${minutes} ${ampm}`;
-
-    return { date: dateStr, time: timeStr, fullYear: now.getFullYear() };
-  }
-
-  function getOrCreateUserId() {
-    let uid = localStorage.getItem("app_user_id");
-    if (!uid) {
-      const { device, browser } = getDeviceAndBrowser();
-      const { date, fullYear } = getFormattedDateTime();
-      const randomSeed = Math.random().toString(36).substring(2);
-
-      const rawSeed = `${device}${browser}${date}${fullYear}${randomSeed}`;
-      let hash = 0;
-      for (let i = 0; i < rawSeed.length; i++) {
-        hash = (Math.imul(31, hash) + rawSeed.charCodeAt(i)) >>> 0;
+        return { device, browser };
       }
 
-      const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-      let shortCode = "";
-      while (shortCode.length < 5) {
-        shortCode += chars[hash % chars.length];
-        hash = Math.floor(hash / chars.length) ^ (Math.random() * 1000 | 0);
+      function getFormattedDateTime() {
+        const now = new Date();
+        const day = String(now.getDate()).padStart(2, '0');
+        const month = now.getMonth() + 1;
+        const dateStr = `${day}-${month}`;
+
+        let hours = now.getHours();
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        const timeStr = `${String(hours).padStart(2, '0')}:${minutes} ${ampm}`;
+
+        return { date: dateStr, time: timeStr, fullYear: now.getFullYear() };
       }
 
-      uid = shortCode.slice(0, 5);
-      localStorage.setItem("app_user_id", uid);
-    }
-    return uid;
-  }
+      function getOrCreateUserId() {
+        let uid = localStorage.getItem("app_user_id");
+        if (!uid) {
+          const { device, browser } = getDeviceAndBrowser();
+          const { date, fullYear } = getFormattedDateTime();
+          const randomSeed = Math.random().toString(36).substring(2);
 
-  function trackVisit(customId) {
-    const userId = customId || getOrCreateUserId();
+          const rawSeed = `${device}${browser}${date}${fullYear}${randomSeed}`;
+          let hash = 0;
+          for (let i = 0; i < rawSeed.length; i++) {
+            hash = (Math.imul(31, hash) + rawSeed.charCodeAt(i)) >>> 0;
+          }
 
-    const idEl = document.getElementById("display-user-id");
-    if (idEl) idEl.textContent = userId;
+          const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+          let shortCode = "";
+          while (shortCode.length < 5) {
+            shortCode += chars[hash % chars.length];
+            hash = Math.floor(hash / chars.length) ^ (Math.random() * 1000 | 0);
+          }
 
-    const { date, time } = getFormattedDateTime();
-    const screenRes = `${window.screen.width}x${window.screen.height}`;
-
-    const payload = {
-      spreadsheetId: SPREADSHEET_ID,
-      userId: userId,
-      date: date,
-      time: time,
-      screen: screenRes,
-      platform: navigator.platform || "Unknown",
-      userAgent: navigator.userAgent
-    };
-
-    console.group("Telemetry Tracker");
-    console.log("User ID:", payload.userId);
-    console.log("Visit Date:", payload.date);
-    console.log("Visit Time:", payload.time);
-    console.log("Screen Dimension:", payload.screen);
-    console.log("Payload:", payload);
-    console.groupEnd();
-
-    if (navigator.sendBeacon) {
-      const blob = new Blob([JSON.stringify(payload)], { type: "text/plain" });
-      navigator.sendBeacon(APPS_SCRIPT_URL, blob);
-    } else {
-      fetch(APPS_SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "text/plain" },
-        body: JSON.stringify(payload)
-      }).catch(err => console.warn("Tracker fetch failed silently:", err));
-    }
-  }
-
-  // Rename Dialog Setup
-  function setupRenameModal() {
-    const userIdBtn = document.getElementById("user-id-btn");
-    const modal = document.getElementById("rename-modal");
-    const input = document.getElementById("rename-input");
-    const cancelBtn = document.getElementById("cancel-rename-btn");
-    const saveBtn = document.getElementById("save-rename-btn");
-    const idEl = document.getElementById("display-user-id");
-
-    if (!userIdBtn || !modal || !input) return;
-
-    userIdBtn.addEventListener("click", () => {
-      input.value = localStorage.getItem("app_user_id") || idEl.textContent;
-      modal.classList.remove("hidden");
-      input.focus();
-    });
-
-    cancelBtn.addEventListener("click", () => {
-      modal.classList.add("hidden");
-    });
-
-    saveBtn.addEventListener("click", () => {
-      const newName = input.value.trim().replace(/[^a-zA-Z0-9_-]/g, "");
-      if (newName) {
-        localStorage.setItem("app_user_id", newName);
-        idEl.textContent = newName;
-        modal.classList.add("hidden");
-        // Log an immediate entry with the new name
-        trackVisit(newName);
+          uid = shortCode.slice(0, 5);
+          localStorage.setItem("app_user_id", uid);
+        }
+        return uid;
       }
-    });
 
-    modal.addEventListener("click", (e) => {
-      if (e.target === modal) modal.classList.add("hidden");
-    });
-  }
+      function trackVisit(customId) {
+        const userId = customId || getOrCreateUserId();
 
-  window.addEventListener("DOMContentLoaded", () => {
-    trackVisit();
-    setupRenameModal();
-  });
-})();
-</script>
+        const idEl = document.getElementById("display-user-id");
+        if (idEl) idEl.textContent = userId;
+
+        const { date, time } = getFormattedDateTime();
+        const screenRes = `${window.screen.width}x${window.screen.height}`;
+
+        const payload = {
+          spreadsheetId: SPREADSHEET_ID,
+          userId: userId,
+          date: date,
+          time: time,
+          screen: screenRes,
+          platform: navigator.platform || "Unknown",
+          userAgent: navigator.userAgent
+        };
+
+        console.group("Telemetry Tracker");
+        console.log("User ID:", payload.userId);
+        console.log("Visit Date:", payload.date);
+        console.log("Visit Time:", payload.time);
+        console.log("Screen Dimension:", payload.screen);
+        console.log("Payload:", payload);
+        console.groupEnd();
+
+        if (navigator.sendBeacon) {
+          const blob = new Blob([JSON.stringify(payload)], { type: "text/plain" });
+          navigator.sendBeacon(APPS_SCRIPT_URL, blob);
+        } else {
+          fetch(APPS_SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify(payload)
+          }).catch(err => console.warn("Tracker fetch failed silently:", err));
+        }
+      }
+
+      function setupRenameModal() {
+        const userIdBtn = document.getElementById("user-id-btn");
+        const modal = document.getElementById("rename-modal");
+        const input = document.getElementById("rename-input");
+        const cancelBtn = document.getElementById("cancel-rename-btn");
+        const saveBtn = document.getElementById("save-rename-btn");
+        const idEl = document.getElementById("display-user-id");
+
+        if (!userIdBtn || !modal || !input) return;
+
+        userIdBtn.addEventListener("click", () => {
+          input.value = localStorage.getItem("app_user_id") || idEl.textContent;
+          modal.classList.remove("hidden");
+          input.focus();
+        });
+
+        cancelBtn.addEventListener("click", () => {
+          modal.classList.add("hidden");
+        });
+
+        saveBtn.addEventListener("click", () => {
+          const newName = input.value.trim().replace(/[^a-zA-Z0-9_-]/g, "");
+          if (newName) {
+            localStorage.setItem("app_user_id", newName);
+            idEl.textContent = newName;
+            modal.classList.add("hidden");
+            trackVisit(newName);
+          }
+        });
+
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) modal.classList.add("hidden");
+        });
+      }
+
+      // SSC Popup, Cache Busting, and User ID Backup/Restore
+      function setupSSCUpdate() {
+        const sscBtn = document.getElementById("ssc-update-btn");
+        const updateModal = document.getElementById("update-modal");
+        const cancelBtn = document.getElementById("cancel-update-btn");
+        const confirmBtn = document.getElementById("confirm-update-btn");
+
+        if (!sscBtn || !updateModal) return;
+
+        sscBtn.addEventListener("click", () => {
+          console.log("[SSC Update] Button clicked. Prompting confirmation popup.");
+          updateModal.classList.remove("hidden");
+        });
+
+        cancelBtn.addEventListener("click", () => {
+          console.log("[SSC Update] User cancelled update.");
+          updateModal.classList.add("hidden");
+        });
+
+        confirmBtn.addEventListener("click", async () => {
+          confirmBtn.disabled = true;
+          confirmBtn.textContent = "Updating...";
+          
+          console.group("🚀 SSC Application Fresh Update Process");
+
+          // 1. Backup user ID
+          const existingUserId = localStorage.getItem("app_user_id") || document.getElementById("display-user-id")?.textContent || "";
+          console.log("Step 1: Backing up current User ID ->", existingUserId);
+
+          // 2. Unregister Service Workers
+          if ('serviceWorker' in navigator) {
+            console.log("Step 2: Checking and unregistering service workers...");
+            try {
+              const registrations = await navigator.serviceWorker.getRegistrations();
+              for (const registration of registrations) {
+                const unregistered = await registration.unregister();
+                console.log(` -> Service Worker (${registration.scope}) unregistered:`, unregistered);
+              }
+            } catch (err) {
+              console.warn(" -> Error unregistering service workers:", err);
+            }
+          }
+
+          // 3. Clear Caches
+          if ('caches' in window) {
+            console.log("Step 3: Purging browser CacheStorage...");
+            try {
+              const cacheKeys = await caches.keys();
+              for (const key of cacheKeys) {
+                const deleted = await caches.delete(key);
+                console.log(` -> Deleted Cache: [${key}] - Success:`, deleted);
+              }
+            } catch (err) {
+              console.warn(" -> Error purging CacheStorage:", err);
+            }
+          }
+
+          // 4. Restore User ID
+          console.log("Step 4: Restoring User ID back into local storage...");
+          if (existingUserId) {
+            localStorage.setItem("app_user_id", existingUserId);
+            console.log(" -> User ID successfully restored:", localStorage.getItem("app_user_id"));
+          } else {
+            console.log(" -> No previous user ID found to restore.");
+          }
+
+          // 5. Force fresh reload
+          console.log("Step 5: Forcing hard cache-bust reload...");
+          console.groupEnd();
+
+          // Clear cache via URL timestamp param and hard reload
+          const url = new URL(window.location.href);
+          url.searchParams.set("v", Date.now().toString());
+          window.location.href = url.toString();
+        });
+
+        updateModal.addEventListener("click", (e) => {
+          if (e.target === updateModal) updateModal.classList.add("hidden");
+        });
+      }
+
+      // Initialize
+      trackVisit();
+      setupRenameModal();
+      setupSSCUpdate();
+    })();
+    </script>
 </body>
 </html>
