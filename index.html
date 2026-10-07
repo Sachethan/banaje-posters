@@ -106,7 +106,10 @@ footer {
         <div class="max-w-7xl mx-auto px-4 h-full flex items-center justify-between relative">
             <div class="flex items-center gap-4">
                 <div id="branding-container">
-                    <h1 class="text-sm font-bold text-white">Bhajane <span class="text-gradient">Posters</span></h1>
+                    <h1 class="text-sm font-bold text-white flex items-center gap-1.5">
+                        <span>Bhajane <span class="text-gradient">Posters</span></span>
+                        <span id="display-app-version" class="text-[10px] font-mono font-medium text-slate-400 bg-slate-800/80 px-1.5 py-0.5 rounded border border-slate-700/60 leading-none"></span>
+                    </h1>
                     <div class="text-[10px] text-slate-400 font-mono tracking-wider flex items-center gap-1 mt-0.5">
                         <span>ID:</span>
                         <button type="button" id="user-id-btn" title="Click to rename" class="group flex items-center gap-1 text-indigo-400 font-semibold bg-slate-800/80 hover:bg-slate-700/80 px-1.5 py-0.5 rounded border border-slate-700/60 leading-none transition cursor-pointer">
@@ -291,14 +294,19 @@ footer {
         render();
     </script>
 
-    <!-- Background Telemetry & ID Management -->
+    <!-- Background Telemetry, Version Control & ID Management -->
     <script>
     (function() {
-      const SPREADSHEET_ID = "11VJ9sxd6MC8zcEBMvKMeuztG-zAaFGt7eI7IwdPS5JI";
+      const TELEMETRY_SPREADSHEET_ID = "11VJ9sxd6MC8zcEBMvKMeuztG-zAaFGt7eI7IwdPS5JI";
       const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwkCSWw1-XIAmPNkUfQWlJpeClq1rjuZ-40G7DmMFfxUfWgmCJm6wdqyZUTlJeOoJEmZw/exec";
 
-      // Renamed storage key so existing users are prompted once to name or skip
+      // Version Config Sheet (A1 cell in 'Version' sheet)
+      const VERSION_SPREADSHEET_ID = "1mk6GCR7vm26YmegLsu1nLU0MDmvL8kJV6c7SpmrQmYc";
+      const VERSION_SHEET_NAME = "Version";
+
+      // Storage Keys
       const STORAGE_USER_ID_KEY = "ssc_app_user_id";
+      const STORAGE_VERSION_KEY = "ssc_app_version";
 
       function getDeviceAndBrowser() {
         const ua = navigator.userAgent;
@@ -361,6 +369,13 @@ footer {
         return input.trim().replace(/[^\p{L}\p{N}_-]/gu, "");
       }
 
+      function renderAppVersion(ver) {
+        const verEl = document.getElementById("display-app-version");
+        if (verEl && ver) {
+          verEl.textContent = ver;
+        }
+      }
+
       function sendTelemetry(userId) {
         const idEl = document.getElementById("display-user-id");
         if (idEl) idEl.textContent = userId;
@@ -369,7 +384,7 @@ footer {
         const screenRes = `${window.screen.width}x${window.screen.height}`;
 
         const payload = {
-          spreadsheetId: SPREADSHEET_ID,
+          spreadsheetId: TELEMETRY_SPREADSHEET_ID,
           userId: userId,
           date: date,
           time: time,
@@ -409,18 +424,15 @@ footer {
         const errEl = document.getElementById("first-time-error");
 
         if (storedId) {
-          // Already registered, send telemetry directly
           sendTelemetry(storedId);
           return;
         }
 
-        // Show modal and prevent closing without action
         if (modal) {
           modal.classList.remove("hidden");
           setTimeout(() => input?.focus(), 150);
         }
 
-        // Handle form submission
         if (form) {
           form.addEventListener("submit", (e) => {
             e.preventDefault();
@@ -440,7 +452,6 @@ footer {
           });
         }
 
-        // Handle skip button
         if (skipBtn) {
           skipBtn.addEventListener("click", () => {
             const autoId = generateFallbackUserId();
@@ -486,7 +497,132 @@ footer {
         });
       }
 
-      // SSC Popup, Cache Busting, and User ID Backup/Restore
+      // Shared Core Application Purge & Fresh Reload Logic
+      async function performAppUpdate(newVersionToStore) {
+        console.group("🚀 SSC Application Purge & Fresh Update Process");
+
+        // 1. Backup user ID
+        const existingUserId = localStorage.getItem(STORAGE_USER_ID_KEY) || document.getElementById("display-user-id")?.textContent || "";
+        console.log("Step 1: Preserving User ID ->", existingUserId);
+
+        // 2. Unregister Service Workers
+        if ('serviceWorker' in navigator) {
+          console.log("Step 2: Checking and unregistering service workers...");
+          try {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            for (const registration of registrations) {
+              const unregistered = await registration.unregister();
+              console.log(` -> Service Worker (${registration.scope}) unregistered:`, unregistered);
+            }
+          } catch (err) {
+            console.warn(" -> Error unregistering service workers:", err);
+          }
+        }
+
+        // 3. Clear CacheStorage
+        if ('caches' in window) {
+          console.log("Step 3: Purging browser CacheStorage...");
+          try {
+            const cacheKeys = await caches.keys();
+            for (const key of cacheKeys) {
+              const deleted = await caches.delete(key);
+              console.log(` -> Deleted Cache: [${key}] - Success:`, deleted);
+            }
+          } catch (err) {
+            console.warn(" -> Error purging CacheStorage:", err);
+          }
+        }
+
+        // 4. Restore User ID & Store latest version
+        console.log("Step 4: Restoring user preferences and saving new version...");
+        if (existingUserId) {
+          localStorage.setItem(STORAGE_USER_ID_KEY, existingUserId);
+        }
+        if (newVersionToStore) {
+          localStorage.setItem(STORAGE_VERSION_KEY, newVersionToStore);
+          console.log(" -> Updated stored version to:", newVersionToStore);
+        }
+
+        // 5. Force fresh reload
+        console.log("Step 5: Forcing hard cache-bust reload...");
+        console.groupEnd();
+
+        const url = new URL(window.location.href);
+        url.searchParams.set("v", Date.now().toString());
+        window.location.href = url.toString();
+      }
+
+      // Fetches A1 value from the 'Version' sheet in the spreadsheet
+      async function fetchRemoteVersion() {
+        try {
+          const tqUrl = `https://docs.google.com/spreadsheets/d/${VERSION_SPREADSHEET_ID}/gviz/tq?sheet=${encodeURIComponent(VERSION_SHEET_NAME)}&range=A1&tqx=out:json&_t=${Date.now()}`;
+          const res = await fetch(tqUrl, { cache: "no-store" });
+          if (!res.ok) return null;
+          
+          const text = await res.text();
+          const startIdx = text.indexOf('{');
+          const endIdx = text.lastIndexOf('}');
+          if (startIdx === -1 || endIdx === -1) return null;
+
+          const json = JSON.parse(text.substring(startIdx, endIdx + 1));
+          const cell = json.table?.rows?.[0]?.c?.[0];
+          if (!cell) return null;
+
+          const rawValue = (cell.v !== undefined && cell.v !== null) ? cell.v : (cell.f || "");
+          const cleanVal = String(rawValue).trim();
+          return cleanVal || null;
+        } catch (err) {
+          console.warn("[Auto-Update] Error fetching remote version:", err);
+          return null;
+        }
+      }
+
+      // Automated check on page load
+      async function checkAutoUpdate() {
+        const sscBtn = document.getElementById("ssc-update-btn");
+        const localVersion = localStorage.getItem(STORAGE_VERSION_KEY);
+
+        // Render saved local version immediately on page load
+        if (localVersion) {
+          renderAppVersion(localVersion);
+        }
+
+        console.log("[Auto-Update] Local stored version:", localVersion);
+        const remoteVersion = await fetchRemoteVersion();
+        console.log("[Auto-Update] Remote sheet version:", remoteVersion);
+
+        if (!remoteVersion) return;
+
+        // If local storage has no version set yet, initialize and display it
+        if (!localVersion) {
+          localStorage.setItem(STORAGE_VERSION_KEY, remoteVersion);
+          renderAppVersion(remoteVersion);
+          return;
+        }
+
+        // If versions differ (e.g. v1 -> v2), trigger auto update
+        if (localVersion !== remoteVersion) {
+          console.log(`[Auto-Update] Version mismatch detected (${localVersion} -> ${remoteVersion}). Triggering auto-update.`);
+          
+          if (sscBtn) {
+            sscBtn.textContent = "Auto Updating...";
+            sscBtn.classList.add("animate-pulse", "pointer-events-none");
+          }
+
+          setTimeout(async () => {
+            await performAppUpdate(remoteVersion);
+          }, 600);
+        } else {
+          console.log("[Auto-Update] Versions match. No update needed.");
+          renderAppVersion(remoteVersion);
+          if (sscBtn) {
+            sscBtn.textContent = "Update";
+            sscBtn.classList.remove("animate-pulse", "pointer-events-none");
+          }
+        }
+      }
+
+      // Manual SSC Update Confirmation Modal Setup
       function setupSSCUpdate() {
         const sscBtn = document.getElementById("ssc-update-btn");
         const updateModal = document.getElementById("update-modal");
@@ -496,6 +632,7 @@ footer {
         if (!sscBtn || !updateModal) return;
 
         sscBtn.addEventListener("click", () => {
+          if (sscBtn.textContent.includes("Updating")) return;
           console.log("[SSC Update] Button clicked. Prompting confirmation popup.");
           updateModal.classList.remove("hidden");
         });
@@ -508,58 +645,10 @@ footer {
         confirmBtn.addEventListener("click", async () => {
           confirmBtn.disabled = true;
           confirmBtn.textContent = "Updating...";
-          
-          console.group("🚀 SSC Application Fresh Update Process");
 
-          // 1. Backup user ID
-          const existingUserId = localStorage.getItem(STORAGE_USER_ID_KEY) || document.getElementById("display-user-id")?.textContent || "";
-          console.log("Step 1: Backing up current User ID ->", existingUserId);
-
-          // 2. Unregister Service Workers
-          if ('serviceWorker' in navigator) {
-            console.log("Step 2: Checking and unregistering service workers...");
-            try {
-              const registrations = await navigator.serviceWorker.getRegistrations();
-              for (const registration of registrations) {
-                const unregistered = await registration.unregister();
-                console.log(` -> Service Worker (${registration.scope}) unregistered:`, unregistered);
-              }
-            } catch (err) {
-              console.warn(" -> Error unregistering service workers:", err);
-            }
-          }
-
-          // 3. Clear Caches
-          if ('caches' in window) {
-            console.log("Step 3: Purging browser CacheStorage...");
-            try {
-              const cacheKeys = await caches.keys();
-              for (const key of cacheKeys) {
-                const deleted = await caches.delete(key);
-                console.log(` -> Deleted Cache: [${key}] - Success:`, deleted);
-              }
-            } catch (err) {
-              console.warn(" -> Error purging CacheStorage:", err);
-            }
-          }
-
-          // 4. Restore User ID
-          console.log("Step 4: Restoring User ID back into local storage...");
-          if (existingUserId) {
-            localStorage.setItem(STORAGE_USER_ID_KEY, existingUserId);
-            console.log(" -> User ID successfully restored:", localStorage.getItem(STORAGE_USER_ID_KEY));
-          } else {
-            console.log(" -> No previous user ID found to restore.");
-          }
-
-          // 5. Force fresh reload
-          console.log("Step 5: Forcing hard cache-bust reload...");
-          console.groupEnd();
-
-          // Clear cache via URL timestamp param and hard reload
-          const url = new URL(window.location.href);
-          url.searchParams.set("v", Date.now().toString());
-          window.location.href = url.toString();
+          // Retrieve latest version during manual update as well
+          const latestVersion = await fetchRemoteVersion();
+          await performAppUpdate(latestVersion || localStorage.getItem(STORAGE_VERSION_KEY));
         });
 
         updateModal.addEventListener("click", (e) => {
@@ -571,6 +660,7 @@ footer {
       checkFirstTimeUser();
       setupRenameModal();
       setupSSCUpdate();
+      checkAutoUpdate();
     })();
     </script>
 </body>
