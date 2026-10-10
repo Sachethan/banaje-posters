@@ -136,7 +136,7 @@ footer {
     <main class="flex-grow relative overflow-hidden bg-gradient-to-br from-dark-900 to-slate-900">
         <div id="template-selector" class="h-full overflow-y-auto">
             <div class="max-w-7xl mx-auto px-4 py-10">
-                <div id="template-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"></div>
+                <div id="template-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6"></div>
             </div>
         </div>
 
@@ -261,7 +261,7 @@ footer {
             grid.innerHTML = '';
             templates.forEach(t => {
                 const card = document.createElement('div');
-                card.className = 'template-card bg-dark-800 border border-slate-700 rounded-xl overflow-hidden cursor-pointer p-4';
+                card.className = 'template-card bg-dark-800 border border-slate-700 rounded-xl overflow-hidden cursor-pointer p-2';
                 card.innerHTML = `
                     <img src="${t.previewImage}" class="w-full h-40 object-cover rounded-lg mb-4" onerror="this.src='https://placehold.co/400x225/1e293b/6366f1?text=Template'">
                     <h3 class="text-white font-bold mb-3">${t.title}</h3>
