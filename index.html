@@ -37,13 +37,11 @@
         }
     </script>
     <style>
-    /* --- Main Studio CSS --- */
     body { 
         font-family: 'Inter', 'Noto Sans Kannada', sans-serif; 
         -webkit-font-smoothing: antialiased; 
     }
 
-    /* Custom Scrollbar for the Gallery Grid */
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-track { background: #0f172a; }
     ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
@@ -85,7 +83,6 @@
         padding: 0 16px;
     }
 
-    /* Hiding the Iframe Scrollbar via Clipping */
     #iframe-container {
         overflow: hidden;
         position: absolute;
@@ -136,10 +133,10 @@
     <main class="flex-grow relative overflow-hidden bg-gradient-to-br from-dark-900 to-slate-900 pb-12">
         <div id="template-selector" class="h-full overflow-y-auto">
             <div class="max-w-7xl mx-auto px-4 py-8">
-                <!-- Template Grid (Contains ONLY Templates) -->
+                <!-- Template Grid -->
                 <div id="template-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6"></div>
 
-                <!-- Dedicated Dynamic App Action Section (Hidden by default; state handled dynamically) -->
+                <!-- Dynamic PWA Action Banner -->
                 <div id="app-action-section" class="hidden mt-8 border border-slate-700/80 bg-gradient-to-r from-slate-900 via-dark-800 to-indigo-950/40 rounded-2xl p-4 sm:p-6 shadow-xl">
                     <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                         <div class="flex items-center gap-4 text-center sm:text-left">
@@ -149,7 +146,7 @@
                                 </svg>
                             </div>
                             <div>
-                                <h3 id="action-title" class="text-sm sm:text-base font-bold text-white">Download Bhajane App</h3>
+                                <h3 id="action-title" class="text-sm sm:text-base font-bold text-white">Download Bhajane Poster App</h3>
                                 <p id="action-desc" class="text-xs text-slate-400 mt-0.5">Install on your phone or PC for instant access, smooth performance, and offline editing.</p>
                             </div>
                         </div>
@@ -178,7 +175,7 @@
     </main>
     <footer>&copy; 2026 Sachethan Salian Creation</footer>
 
-    <!-- First Time Welcome & Name Prompt Modal (Blocking) -->
+    <!-- First Time Welcome Modal -->
     <div id="first-time-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 backdrop-blur-md p-4 hidden">
         <div class="bg-dark-800 border border-indigo-500/40 rounded-2xl p-6 max-w-sm w-full shadow-2xl relative text-center">
             <div class="w-14 h-14 bg-indigo-500/20 text-indigo-400 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl font-bold">
@@ -324,10 +321,10 @@
         render();
     </script>
 
-    <!-- Dynamic PWA / Browser Action Logic -->
+    <!-- Dynamic PWA Detection & Launch Logic -->
     <script>
         let pwaPrompt = null;
-        let isAppInstalledOnDevice = false;
+        let isAppInstalled = false;
 
         const actionSection = document.getElementById('app-action-section');
         const actionBtn = document.getElementById('app-action-btn');
@@ -337,12 +334,8 @@
         const actionIcon = document.getElementById('action-icon');
         const actionBtnIcon = document.getElementById('action-btn-icon');
 
-        /**
-         * Real-time check if window is running inside the standalone PWA wrapper.
-         */
-        function isRunningInPWA() {
+        function isRunningInsidePWA() {
             return (
-                window.navigator.standalone === true || // iOS Safari standalone
                 window.matchMedia('(display-mode: standalone)').matches ||
                 window.matchMedia('(display-mode: minimal-ui)').matches ||
                 window.matchMedia('(display-mode: fullscreen)').matches ||
@@ -351,29 +344,11 @@
             );
         }
 
-        /**
-         * Real-time query to check if the app is already installed on the OS/Device.
-         * Pure API check - does NOT use localStorage.
-         */
-        async function checkIsAppInstalled() {
-            if ('getInstalledRelatedApps' in navigator) {
-                try {
-                    const relatedApps = await navigator.getInstalledRelatedApps();
-                    return Array.isArray(relatedApps) && relatedApps.length > 0;
-                } catch (err) {
-                    console.debug('getInstalledRelatedApps not supported or failed:', err);
-                }
-            }
-            return false;
-        }
-
-        /**
-         * Updates UI elements for "Open in App" mode.
-         */
-        function renderOpenInAppUI() {
-            actionTitle.textContent = "Open in Bhajane App";
-            actionDesc.textContent = "The app is installed on this device. Open it for a faster, full-screen experience.";
-            actionBtnText.textContent = "Open App";
+        function showOpenInApp() {
+            isAppInstalled = true;
+            actionTitle.textContent = "Open in Bhajane Poster App";
+            actionDesc.textContent = "Bhajane is installed on your device. Launch it for full-screen mode.";
+            actionBtnText.textContent = "Open in App";
 
             const openIconSVG = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>`;
             actionIcon.innerHTML = openIconSVG;
@@ -382,11 +357,9 @@
             actionSection.classList.remove('hidden');
         }
 
-        /**
-         * Updates UI elements for "Install App" mode.
-         */
-        function renderInstallAppUI() {
-            actionTitle.textContent = "Download Bhajane App";
+        function showInstallApp() {
+            isAppInstalled = false;
+            actionTitle.textContent = "Download Bhajane Poster App";
             actionDesc.textContent = "Install on your phone or PC for instant access, smooth performance, and offline editing.";
             actionBtnText.textContent = "Install App";
 
@@ -397,81 +370,75 @@
             actionSection.classList.remove('hidden');
         }
 
-        /**
-         * Orchestrates checking conditions and setting correct state.
-         */
-        async function syncPWAState() {
-            // 1. If currently inside the PWA, don't show either button
-            if (isRunningInPWA()) {
+        async function detectPWAStatus() {
+            // Never show banner when inside standalone window
+            if (isRunningInsidePWA()) {
                 actionSection.classList.add('hidden');
                 return;
             }
 
-            // 2. In browser: check if the OS has this PWA installed
-            isAppInstalledOnDevice = await checkIsAppInstalled();
-
-            if (isAppInstalledOnDevice) {
-                renderOpenInAppUI();
-            } else {
-                renderInstallAppUI();
+            // Check if installed on device
+            if ('getInstalledRelatedApps' in navigator) {
+                try {
+                    const apps = await navigator.getInstalledRelatedApps();
+                    if (apps && apps.length > 0) {
+                        showOpenInApp();
+                        return;
+                    }
+                } catch (e) {
+                    console.debug('getInstalledRelatedApps check:', e);
+                }
             }
+
+            // If not standalone and no install prompt fired within 700ms, app is installed
+            setTimeout(() => {
+                if (!pwaPrompt && !isAppInstalled && !isRunningInsidePWA()) {
+                    showOpenInApp();
+                }
+            }, 700);
         }
 
-        // Capture Android/Desktop Chrome native install prompt
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             pwaPrompt = e;
-            isAppInstalledOnDevice = false;
-            if (!isRunningInPWA()) {
-                renderInstallAppUI();
+            if (!isRunningInsidePWA()) {
+                showInstallApp();
             }
         });
 
-        // Handle button clicks based on dynamic state
         actionBtn.addEventListener('click', async () => {
-            if (isAppInstalledOnDevice) {
-                // Launch the installed PWA
-                const currentUrl = window.location.href;
-                const isAndroid = /Android/i.test(navigator.userAgent);
+            if (isAppInstalled) {
+                // Open installed PWA on GitHub Pages repository subpath
+                const host = window.location.host;
+                const path = window.location.pathname.replace(/^\//, '');
+                const targetUrl = window.location.href;
 
-                if (isAndroid) {
-                    const hostAndPath = window.location.host + window.location.pathname;
-                    window.location.href = `intent://${hostAndPath}#Intent;scheme=https;package=${window.location.hostname};end`;
-                    setTimeout(() => { window.open(currentUrl, '_blank'); }, 600);
-                } else {
-                    window.open(currentUrl, '_blank');
-                }
+                // Android Intent launcher targeting the installed WebAPK
+                const intentUrl = `intent://${host}/${path}#Intent;scheme=https;package=com.android.chrome;action=android.intent.action.VIEW;end`;
+
+                window.location.href = intentUrl;
+                setTimeout(() => { window.open(targetUrl, '_blank'); }, 1000);
                 return;
             }
 
-            // Trigger Installation
             if (pwaPrompt) {
                 pwaPrompt.prompt();
                 const choice = await pwaPrompt.userChoice;
                 if (choice.outcome === 'accepted') {
-                    isAppInstalledOnDevice = true;
-                    renderOpenInAppUI();
+                    showOpenInApp();
                 }
                 pwaPrompt = null;
             } else {
-                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-                if (isIOS) {
-                    alert('To install on iPhone/iPad:\n1. Tap the Share button (square icon with arrow) at the bottom.\n2. Scroll down and tap "Add to Home Screen".');
-                } else {
-                    alert('To install the app:\n- On Android: Tap menu (⋮) > "Add to Home screen" or "Install App".\n- On PC/Mac: Click the install icon in your browser address bar.');
-                }
+                alert('To install the app:\n- On Android Chrome: Tap menu (⋮) > "Install app" or "Add to Home screen".\n- On PC: Click the install icon in your address bar.');
             }
         });
 
-        // When installation completes
         window.addEventListener('appinstalled', () => {
             pwaPrompt = null;
-            isAppInstalledOnDevice = true;
-            syncPWAState();
+            showOpenInApp();
         });
 
-        // Run on load
-        syncPWAState();
+        detectPWAStatus();
     </script>
 </body>
 </html>
