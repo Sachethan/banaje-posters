@@ -9,19 +9,19 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;600;700&display=swap" rel="stylesheet">
 
-<link rel="manifest" href="manifest.json" />
-<meta name="theme-color" content="#1976d2" />
-<meta name="mobile-web-app-capable" content="yes" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#1976d2" />
+    <meta name="mobile-web-app-capable" content="yes" />
 
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(reg => console.log('SW registered:', reg))
-        .catch(err => console.error('SW error:', err));
-    });
-  }
-</script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('SW registered:', reg))
+            .catch(err => console.error('SW error:', err));
+        });
+      }
+    </script>
 
     <script>
         tailwind.config = {
@@ -37,68 +37,68 @@
         }
     </script>
     <style>
-/* --- Main Studio CSS --- */
-body { 
-    font-family: 'Inter', 'Noto Sans Kannada', sans-serif; 
-    -webkit-font-smoothing: antialiased; 
-}
+    /* --- Main Studio CSS --- */
+    body { 
+        font-family: 'Inter', 'Noto Sans Kannada', sans-serif; 
+        -webkit-font-smoothing: antialiased; 
+    }
 
-/* Custom Scrollbar for the Gallery Grid */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: #0f172a; }
-::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    /* Custom Scrollbar for the Gallery Grid */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
 
-.spinner { 
-    width: 40px; height: 40px; 
-    border: 3px solid rgba(99, 102, 241, 0.3); 
-    border-radius: 50%; border-top-color: #6366f1; 
-    animation: spin 0.8s ease-in-out infinite; 
-}
+    .spinner { 
+        width: 40px; height: 40px; 
+        border: 3px solid rgba(99, 102, 241, 0.3); 
+        border-radius: 50%; border-top-color: #6366f1; 
+        animation: spin 0.8s ease-in-out infinite; 
+    }
 
-@keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-.template-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-.template-card:hover { transform: translateY(-4px); border-color: #6366f1; }
+    .template-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .template-card:hover { transform: translateY(-4px); border-color: #6366f1; }
 
-.text-gradient { 
-    background-clip: text; 
-    -webkit-background-clip: text; 
-    -webkit-text-fill-color: transparent; 
-    background-image: linear-gradient(to right, #818cf8, #c084fc, #22d3ee); 
-}
+    .text-gradient { 
+        background-clip: text; 
+        -webkit-background-clip: text; 
+        -webkit-text-fill-color: transparent; 
+        background-image: linear-gradient(to right, #818cf8, #c084fc, #22d3ee); 
+    }
 
-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 42px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(15, 23, 42, 0.95);
-    backdrop-filter: blur(8px);
-    border-top: 1px solid rgba(51, 65, 85, 0.6);
-    color: #94a3b8;
-    font-size: 12px;
-    z-index: 30;
-    padding: 0 16px;
-}
+    footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(8px);
+        border-top: 1px solid rgba(51, 65, 85, 0.6);
+        color: #94a3b8;
+        font-size: 12px;
+        z-index: 30;
+        padding: 0 16px;
+    }
 
-/* Hiding the Iframe Scrollbar via Clipping */
-#iframe-container {
-    overflow: hidden;
-    position: absolute;
-    inset: 0;
-    z-index: 40;
-}
+    /* Hiding the Iframe Scrollbar via Clipping */
+    #iframe-container {
+        overflow: hidden;
+        position: absolute;
+        inset: 0;
+        z-index: 40;
+    }
 
-#viewer {
-    width: calc(100% + 20px); 
-    height: 100%;
-    border: none;
-}
-</style>
+    #viewer {
+        width: calc(100% + 20px); 
+        height: 100%;
+        border: none;
+    }
+    </style>
 </head>
 <body class="bg-dark-900 text-slate-200 flex flex-col h-screen overflow-hidden">
 
@@ -122,21 +122,47 @@ footer {
             <div id="editor-nav" class="hidden text-xs bg-slate-800/50 px-3 py-1.5 rounded-full border border-slate-700">
                 <span id="template-breadcrumb" class="text-indigo-400 font-semibold ml-1 tracking-wide inline-block align-bottom truncate max-w-[50px]">Untitled</span>
             </div>
-           <button id="back-to-gallery-btn" class="hidden m-4 items-center gap-2 px-3 py-1.5 bg-slate-800 text-slate-300 text-sm rounded-lg border border-slate-700 cursor-pointer hover:bg-slate-700 transition">
-           Back
-           </button>
-           <div class="text-xs">
-               <button type="button" id="ssc-update-btn" title="Check for Updates" class="text-indigo-400 font-semibold hover:text-indigo-300 px-2 py-1 rounded hover:bg-slate-800 border border-transparent hover:border-slate-700 transition cursor-pointer">
-                   Update
-               </button>
-           </div>
+            <button id="back-to-gallery-btn" class="hidden m-4 items-center gap-2 px-3 py-1.5 bg-slate-800 text-slate-300 text-sm rounded-lg border border-slate-700 cursor-pointer hover:bg-slate-700 transition">
+                Back
+            </button>
+            <div class="text-xs">
+                <button type="button" id="ssc-update-btn" title="Check for Updates" class="text-indigo-400 font-semibold hover:text-indigo-300 px-2 py-1 rounded hover:bg-slate-800 border border-transparent hover:border-slate-700 transition cursor-pointer">
+                    Update
+                </button>
+            </div>
         </div>
     </header>
 
-    <main class="flex-grow relative overflow-hidden bg-gradient-to-br from-dark-900 to-slate-900">
+    <main class="flex-grow relative overflow-hidden bg-gradient-to-br from-dark-900 to-slate-900 pb-12">
         <div id="template-selector" class="h-full overflow-y-auto">
-            <div class="max-w-7xl mx-auto px-4 py-10">
+            <div class="max-w-7xl mx-auto px-4 py-8">
+                <!-- Template Grid (Contains ONLY Templates) -->
                 <div id="template-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6"></div>
+
+                <!-- Dedicated Separate Install App Section (Outside the Grid) -->
+                <div id="app-install-section" class="mt-8 border border-slate-700/80 bg-gradient-to-r from-slate-900 via-dark-800 to-indigo-950/40 rounded-2xl p-4 sm:p-6 shadow-xl">
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="flex items-center gap-4 text-center sm:text-left">
+                            <div class="w-12 h-12 flex-shrink-0 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center mx-auto sm:mx-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-sm sm:text-base font-bold text-white">Download Bhajane App</h3>
+                                <p class="text-xs text-slate-400 mt-0.5">Install on your phone or PC for instant access, smooth performance, and offline editing.</p>
+                            </div>
+                        </div>
+                        <div class="w-full sm:w-auto flex items-center justify-end">
+                            <button type="button" id="app-install-button" class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white text-xs sm:text-sm font-semibold rounded-xl transition shadow-lg shadow-indigo-600/30 cursor-pointer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                </svg>
+                                Install App
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -292,6 +318,46 @@ footer {
         viewer.addEventListener('load', hideLoader);
         viewer.addEventListener('error', hideLoader);
         render();
+    </script>
+
+    <!-- PWA Install Handling Logic -->
+    <script>
+        let pwaPrompt = null;
+        const installSection = document.getElementById('app-install-section');
+        const installBtn = document.getElementById('app-install-button');
+
+        // Check if app is already running as installed PWA
+        const isAppStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+        if (isAppStandalone) {
+            installSection.classList.add('hidden');
+        }
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            pwaPrompt = e;
+            if (!isAppStandalone) {
+                installSection.classList.remove('hidden');
+            }
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (pwaPrompt) {
+                pwaPrompt.prompt();
+                const choice = await pwaPrompt.userChoice;
+                if (choice.outcome === 'accepted') {
+                    installSection.classList.add('hidden');
+                }
+                pwaPrompt = null;
+            } else {
+                alert('To install the app:\n- On Chrome/Edge (Desktop): Click the install icon in the address bar or menu (⋮) > "Install Bhajane".\n- On Android: Tap menu (⋮) > "Install app" or "Add to Home screen".\n- On iPhone/iPad: Tap Share > "Add to Home Screen".');
+            }
+        });
+
+        window.addEventListener('appinstalled', () => {
+            installSection.classList.add('hidden');
+            pwaPrompt = null;
+        });
     </script>
 
     <!-- External Module Scripts -->
