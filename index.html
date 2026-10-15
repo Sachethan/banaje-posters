@@ -136,11 +136,11 @@
     <main class="flex-grow relative overflow-hidden bg-gradient-to-br from-dark-900 to-slate-900 pb-12">
         <div id="template-selector" class="h-full overflow-y-auto">
             <div class="max-w-7xl mx-auto px-4 py-8">
-                <!-- Template Grid (Contains ONLY Templates) -->
+                <!-- Template Grid -->
                 <div id="template-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6"></div>
 
-                <!-- Dedicated Separate Install App Section (Outside the Grid) -->
-                <div id="app-install-section" class="mt-8 border border-slate-700/80 bg-gradient-to-r from-slate-900 via-dark-800 to-indigo-950/40 rounded-2xl p-4 sm:p-6 shadow-xl">
+                <!-- APK Download Section (Hidden automatically when inside the app) -->
+                <div id="apk-download-section" class="mt-8 border border-slate-700/80 bg-gradient-to-r from-slate-900 via-dark-800 to-indigo-950/40 rounded-2xl p-4 sm:p-6 shadow-xl">
                     <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                         <div class="flex items-center gap-4 text-center sm:text-left">
                             <div class="w-12 h-12 flex-shrink-0 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center mx-auto sm:mx-0">
@@ -149,17 +149,17 @@
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="text-sm sm:text-base font-bold text-white">Download Bhajane App</h3>
-                                <p class="text-xs text-slate-400 mt-0.5">Install on your phone or PC for instant access, smooth performance, and offline editing.</p>
+                                <h3 class="text-sm sm:text-base font-bold text-white">Download Android App (.apk)</h3>
+                                <p class="text-xs text-slate-400 mt-0.5">Install the Bhajane App on your Android device for faster access and better offline support.</p>
                             </div>
                         </div>
                         <div class="w-full sm:w-auto flex items-center justify-end">
-                            <button type="button" id="app-install-button" class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white text-xs sm:text-sm font-semibold rounded-xl transition shadow-lg shadow-indigo-600/30 cursor-pointer">
+                            <a href="https://sachethan.github.io/banaje-posters/bajane.apk" download="bajane.apk" class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white text-xs sm:text-sm font-semibold rounded-xl transition shadow-lg shadow-indigo-600/30 cursor-pointer">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                                 </svg>
-                                Install App
-                            </button>
+                                Download APK
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -320,44 +320,27 @@
         render();
     </script>
 
-    <!-- PWA Install Handling Logic -->
+    <!-- In-App / WebView Detection Logic -->
     <script>
-        let pwaPrompt = null;
-        const installSection = document.getElementById('app-install-section');
-        const installBtn = document.getElementById('app-install-button');
+        (function checkInsideApp() {
+            const apkSection = document.getElementById('apk-download-section');
+            if (!apkSection) return;
 
-        // Check if app is already running as installed PWA
-        const isAppStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            const ua = (navigator.userAgent || navigator.vendor || window.opera || '').toLowerCase();
+            const urlParams = new URLSearchParams(window.location.search);
 
-        if (isAppStandalone) {
-            installSection.classList.add('hidden');
-        }
+            // Checks:
+            // 1. Android WebView indicator (Version/... Chrome/... Mobile or '; wv;')
+            const isAndroidWebView = /wv/.test(ua) || (ua.includes('android') && ua.includes('version/'));
+            // 2. Standalone app display mode (TWA, installed web wrapper, etc.)
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            // 3. Optional custom query string or custom user-agent flag (e.g., inside your APK WebView setup: ?app=true)
+            const hasAppQuery = urlParams.get('app') === 'true' || urlParams.get('inapp') === 'true';
 
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            pwaPrompt = e;
-            if (!isAppStandalone) {
-                installSection.classList.remove('hidden');
+            if (isAndroidWebView || isStandalone || hasAppQuery) {
+                apkSection.style.display = 'none';
             }
-        });
-
-        installBtn.addEventListener('click', async () => {
-            if (pwaPrompt) {
-                pwaPrompt.prompt();
-                const choice = await pwaPrompt.userChoice;
-                if (choice.outcome === 'accepted') {
-                    installSection.classList.add('hidden');
-                }
-                pwaPrompt = null;
-            } else {
-                alert('To install the app:\n- On Chrome/Edge (Desktop): Click the install icon in the address bar or menu (⋮) > "Install Bhajane".\n- On Android: Tap menu (⋮) > "Install app" or "Add to Home screen".\n- On iPhone/iPad: Tap Share > "Add to Home Screen".');
-            }
-        });
-
-        window.addEventListener('appinstalled', () => {
-            installSection.classList.add('hidden');
-            pwaPrompt = null;
-        });
+        })();
     </script>
 
     <!-- External Module Scripts -->
