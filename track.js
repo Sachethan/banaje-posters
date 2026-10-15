@@ -25,8 +25,9 @@
   function getFormattedDateTime() {
     const now = new Date();
     const day = String(now.getDate()).padStart(2, '0');
-    const month = now.getMonth() + 1;
-    const dateStr = `${day}-${month}`;
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = now.getFullYear();
+    const dateStr = `'${day}/${month}/${year}`;
 
     let hours = now.getHours();
     const minutes = String(now.getMinutes()).padStart(2, '0');
@@ -35,7 +36,7 @@
     hours = hours ? hours : 12;
     const timeStr = `${String(hours).padStart(2, '0')}:${minutes} ${ampm}`;
 
-    return { date: dateStr, time: timeStr, fullYear: now.getFullYear() };
+    return { date: dateStr, time: timeStr, fullYear: year };
   }
 
   function generateFallbackUserId() {
