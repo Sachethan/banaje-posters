@@ -37,11 +37,13 @@
         }
     </script>
     <style>
+    /* --- Main Studio CSS --- */
     body { 
         font-family: 'Inter', 'Noto Sans Kannada', sans-serif; 
         -webkit-font-smoothing: antialiased; 
     }
 
+    /* Custom Scrollbar for the Gallery Grid */
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-track { background: #0f172a; }
     ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
@@ -83,6 +85,7 @@
         padding: 0 16px;
     }
 
+    /* Hiding the Iframe Scrollbar via Clipping */
     #iframe-container {
         overflow: hidden;
         position: absolute;
@@ -133,29 +136,29 @@
     <main class="flex-grow relative overflow-hidden bg-gradient-to-br from-dark-900 to-slate-900 pb-12">
         <div id="template-selector" class="h-full overflow-y-auto">
             <div class="max-w-7xl mx-auto px-4 py-8">
-                <!-- Template Grid -->
+                <!-- Template Grid (Contains ONLY Templates) -->
                 <div id="template-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6"></div>
 
-                <!-- Dynamic PWA Action Banner -->
-                <div id="app-action-section" class="hidden mt-8 border border-slate-700/80 bg-gradient-to-r from-slate-900 via-dark-800 to-indigo-950/40 rounded-2xl p-4 sm:p-6 shadow-xl">
+                <!-- Dedicated Separate Install App Section (Hidden by default, shown conditionally in browser) -->
+                <div id="app-install-section" class="hidden mt-8 border border-slate-700/80 bg-gradient-to-r from-slate-900 via-dark-800 to-indigo-950/40 rounded-2xl p-4 sm:p-6 shadow-xl">
                     <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                         <div class="flex items-center gap-4 text-center sm:text-left">
                             <div class="w-12 h-12 flex-shrink-0 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center mx-auto sm:mx-0">
-                                <svg id="action-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                                 </svg>
                             </div>
                             <div>
-                                <h3 id="action-title" class="text-sm sm:text-base font-bold text-white">Download Bhajane Poster App</h3>
-                                <p id="action-desc" class="text-xs text-slate-400 mt-0.5">Install on your phone or PC for instant access, smooth performance, and offline editing.</p>
+                                <h3 class="text-sm sm:text-base font-bold text-white">Download Bhajane App</h3>
+                                <p class="text-xs text-slate-400 mt-0.5">Install on your phone or PC for instant access, smooth performance, and offline editing.</p>
                             </div>
                         </div>
                         <div class="w-full sm:w-auto flex items-center justify-end">
-                            <button type="button" id="app-action-btn" class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white text-xs sm:text-sm font-semibold rounded-xl transition shadow-lg shadow-indigo-600/30 cursor-pointer">
-                                <svg id="action-btn-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <button type="button" id="app-install-button" class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white text-xs sm:text-sm font-semibold rounded-xl transition shadow-lg shadow-indigo-600/30 cursor-pointer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                                 </svg>
-                                <span id="action-btn-text">Install App</span>
+                                Install App
                             </button>
                         </div>
                     </div>
@@ -175,7 +178,7 @@
     </main>
     <footer>&copy; 2026 Sachethan Salian Creation</footer>
 
-    <!-- First Time Welcome Modal -->
+    <!-- First Time Welcome & Name Prompt Modal (Blocking) -->
     <div id="first-time-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 backdrop-blur-md p-4 hidden">
         <div class="bg-dark-800 border border-indigo-500/40 rounded-2xl p-6 max-w-sm w-full shadow-2xl relative text-center">
             <div class="w-14 h-14 bg-indigo-500/20 text-indigo-400 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl font-bold">
@@ -321,21 +324,16 @@
         render();
     </script>
 
-    <!-- Dynamic PWA Detection & Launch Logic -->
+    <!-- PWA Install Handling Logic -->
     <script>
         let pwaPrompt = null;
-        let isAppInstalled = false;
+        const installSection = document.getElementById('app-install-section');
+        const installBtn = document.getElementById('app-install-button');
 
-        const actionSection = document.getElementById('app-action-section');
-        const actionBtn = document.getElementById('app-action-btn');
-        const actionTitle = document.getElementById('action-title');
-        const actionDesc = document.getElementById('action-desc');
-        const actionBtnText = document.getElementById('action-btn-text');
-        const actionIcon = document.getElementById('action-icon');
-        const actionBtnIcon = document.getElementById('action-btn-icon');
-
-        function isRunningInsidePWA() {
+        // Check if currently operating inside an installed PWA window
+        function isRunningInPWA() {
             return (
+                window.navigator.standalone === true || // iOS standalone Safari
                 window.matchMedia('(display-mode: standalone)').matches ||
                 window.matchMedia('(display-mode: minimal-ui)').matches ||
                 window.matchMedia('(display-mode: fullscreen)').matches ||
@@ -344,101 +342,84 @@
             );
         }
 
-        function showOpenInApp() {
-            isAppInstalled = true;
-            actionTitle.textContent = "Open in Bhajane Poster App";
-            actionDesc.textContent = "Bhajane is installed on your device. Launch it for full-screen mode.";
-            actionBtnText.textContent = "Open in App";
+        // Check whether the app has already been installed on this device/browser
+        async function checkAlreadyInstalled() {
+            // Check stored flag from prior installations
+            if (localStorage.getItem('bhajane_pwa_installed') === 'true') {
+                return true;
+            }
 
-            const openIconSVG = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>`;
-            actionIcon.innerHTML = openIconSVG;
-            actionBtnIcon.innerHTML = openIconSVG;
-
-            actionSection.classList.remove('hidden');
+            // Check Chrome / Android API for installed related applications
+            if ('getInstalledRelatedApps' in navigator) {
+                try {
+                    const relatedApps = await navigator.getInstalledRelatedApps();
+                    if (relatedApps && relatedApps.length > 0) {
+                        localStorage.setItem('bhajane_pwa_installed', 'true');
+                        return true;
+                    }
+                } catch (e) {
+                    console.warn('getInstalledRelatedApps check skipped:', e);
+                }
+            }
+            return false;
         }
 
-        function showInstallApp() {
-            isAppInstalled = false;
-            actionTitle.textContent = "Download Bhajane Poster App";
-            actionDesc.textContent = "Install on your phone or PC for instant access, smooth performance, and offline editing.";
-            actionBtnText.textContent = "Install App";
-
-            const installIconSVG = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>`;
-            actionIcon.innerHTML = installIconSVG;
-            actionBtnIcon.innerHTML = installIconSVG;
-
-            actionSection.classList.remove('hidden');
-        }
-
-        async function detectPWAStatus() {
-            // Never show banner when inside standalone window
-            if (isRunningInsidePWA()) {
-                actionSection.classList.add('hidden');
+        // Evaluate whether to display the install prompt card
+        async function initInstallUI() {
+            // 1. If currently inside the PWA, keep hidden
+            if (isRunningInPWA()) {
+                installSection.classList.add('hidden');
+                localStorage.setItem('bhajane_pwa_installed', 'true');
                 return;
             }
 
-            // Check if installed on device
-            if ('getInstalledRelatedApps' in navigator) {
-                try {
-                    const apps = await navigator.getInstalledRelatedApps();
-                    if (apps && apps.length > 0) {
-                        showOpenInApp();
-                        return;
-                    }
-                } catch (e) {
-                    console.debug('getInstalledRelatedApps check:', e);
-                }
+            // 2. If already installed on this device, keep hidden in browser too
+            const alreadyInstalled = await checkAlreadyInstalled();
+            if (alreadyInstalled) {
+                installSection.classList.add('hidden');
+                return;
             }
 
-            // If not standalone and no install prompt fired within 700ms, app is installed
-            setTimeout(() => {
-                if (!pwaPrompt && !isAppInstalled && !isRunningInsidePWA()) {
-                    showOpenInApp();
-                }
-            }, 700);
+            // 3. Otherwise, reveal in mobile/desktop browser
+            installSection.classList.remove('hidden');
         }
 
+        // Capture Android/Chrome native prompt if available
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             pwaPrompt = e;
-            if (!isRunningInsidePWA()) {
-                showInstallApp();
-            }
+            initInstallUI();
         });
 
-        actionBtn.addEventListener('click', async () => {
-            if (isAppInstalled) {
-                // Open installed PWA on GitHub Pages repository subpath
-                const host = window.location.host;
-                const path = window.location.pathname.replace(/^\//, '');
-                const targetUrl = window.location.href;
-
-                // Android Intent launcher targeting the installed WebAPK
-                const intentUrl = `intent://${host}/${path}#Intent;scheme=https;package=com.android.chrome;action=android.intent.action.VIEW;end`;
-
-                window.location.href = intentUrl;
-                setTimeout(() => { window.open(targetUrl, '_blank'); }, 1000);
-                return;
-            }
-
+        // Trigger manual or native installation
+        installBtn.addEventListener('click', async () => {
             if (pwaPrompt) {
                 pwaPrompt.prompt();
                 const choice = await pwaPrompt.userChoice;
                 if (choice.outcome === 'accepted') {
-                    showOpenInApp();
+                    installSection.classList.add('hidden');
+                    localStorage.setItem('bhajane_pwa_installed', 'true');
                 }
                 pwaPrompt = null;
             } else {
-                alert('To install the app:\n- On Android Chrome: Tap menu (⋮) > "Install app" or "Add to Home screen".\n- On PC: Click the install icon in your address bar.');
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                if (isIOS) {
+                    alert('To install on iPhone/iPad:\n1. Tap the Share button (square with arrow) at the bottom.\n2. Scroll down and tap "Add to Home Screen".');
+                } else {
+                    alert('To install the app:\n- On Android: Tap menu (⋮) > "Add to Home screen" or "Install App".\n- On PC: Click the install icon in the URL bar or menu (⋮) > "Install Bhajane".');
+                }
             }
         });
 
+        // Hide when installation succeeds
         window.addEventListener('appinstalled', () => {
+            installSection.classList.add('hidden');
+            localStorage.setItem('bhajane_pwa_installed', 'true');
             pwaPrompt = null;
-            showOpenInApp();
         });
 
-        detectPWAStatus();
+        // Run check on initial page load
+        initInstallUI();
     </script>
 </body>
 </html>
