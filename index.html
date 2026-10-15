@@ -139,8 +139,8 @@
                 <!-- Template Grid (Contains ONLY Templates) -->
                 <div id="template-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6"></div>
 
-                <!-- Dedicated Separate Install App Section (Outside the Grid) -->
-                <div id="app-install-section" class="mt-8 border border-slate-700/80 bg-gradient-to-r from-slate-900 via-dark-800 to-indigo-950/40 rounded-2xl p-4 sm:p-6 shadow-xl">
+                <!-- Dedicated Separate Install App Section (Hidden by default, shown conditionally in browser) -->
+                <div id="app-install-section" class="hidden mt-8 border border-slate-700/80 bg-gradient-to-r from-slate-900 via-dark-800 to-indigo-950/40 rounded-2xl p-4 sm:p-6 shadow-xl">
                     <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                         <div class="flex items-center gap-4 text-center sm:text-left">
                             <div class="w-12 h-12 flex-shrink-0 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center mx-auto sm:mx-0">
@@ -149,7 +149,7 @@
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="text-sm sm:text-base font-bold text-white">Download Bhajane App</h3>
+                                <h3 class="text-sm sm:text-base font-bold text-white">Download Bhajane Poster App</h3>
                                 <p class="text-xs text-slate-400 mt-0.5">Install on your phone or PC for instant access, smooth performance, and offline editing.</p>
                             </div>
                         </div>
@@ -253,9 +253,11 @@
             </div>
         </div>
     </div>
+
     <!-- External Module Scripts -->
     <script src="track.js"></script>
     <script src="version.js"></script>
+
     <!-- Main UI & Viewer Logic -->
     <script>
         const templates = [
@@ -328,38 +330,96 @@
         const installSection = document.getElementById('app-install-section');
         const installBtn = document.getElementById('app-install-button');
 
-        // Check if app is already running as installed PWA
-        const isAppStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-
-        if (isAppStandalone) {
-            installSection.classList.add('hidden');
+        // Check if currently operating inside an installed PWA window
+        function isRunningInPWA() {
+            return (
+                window.navigator.standalone === true || // iOS standalone Safari
+                window.matchMedia('(display-mode: standalone)').matches ||
+                window.matchMedia('(display-mode: minimal-ui)').matches ||
+                window.matchMedia('(display-mode: fullscreen)').matches ||
+                window.matchMedia('(display-mode: window-controls-overlay)').matches ||
+                document.referrer.includes('android-app://')
+            );
         }
 
+        // Check whether the app has already been installed on this device/browser
+        async function checkAlreadyInstalled() {
+            // Check stored flag from prior installations
+            if (localStorage.getItem('bhajane_pwa_installed') === 'true') {
+                return true;
+            }
+
+            // Check Chrome / Android API for installed related applications
+            if ('getInstalledRelatedApps' in navigator) {
+                try {
+                    const relatedApps = await navigator.getInstalledRelatedApps();
+                    if (relatedApps && relatedApps.length > 0) {
+                        localStorage.setItem('bhajane_pwa_installed', 'true');
+                        return true;
+                    }
+                } catch (e) {
+                    console.warn('getInstalledRelatedApps check skipped:', e);
+                }
+            }
+            return false;
+        }
+
+        // Evaluate whether to display the install prompt card
+        async function initInstallUI() {
+            // 1. If currently inside the PWA, keep hidden
+            if (isRunningInPWA()) {
+                installSection.classList.add('hidden');
+                localStorage.setItem('bhajane_pwa_installed', 'true');
+                return;
+            }
+
+            // 2. If already installed on this device, keep hidden in browser too
+            const alreadyInstalled = await checkAlreadyInstalled();
+            if (alreadyInstalled) {
+                installSection.classList.add('hidden');
+                return;
+            }
+
+            // 3. Otherwise, reveal in mobile/desktop browser
+            installSection.classList.remove('hidden');
+        }
+
+        // Capture Android/Chrome native prompt if available
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             pwaPrompt = e;
-            if (!isAppStandalone) {
-                installSection.classList.remove('hidden');
-            }
+            initInstallUI();
         });
 
+        // Trigger manual or native installation
         installBtn.addEventListener('click', async () => {
             if (pwaPrompt) {
                 pwaPrompt.prompt();
                 const choice = await pwaPrompt.userChoice;
                 if (choice.outcome === 'accepted') {
                     installSection.classList.add('hidden');
+                    localStorage.setItem('bhajane_pwa_installed', 'true');
                 }
                 pwaPrompt = null;
             } else {
-                alert('To install the app:\n- On Chrome/Edge (Desktop): Click the install icon in the address bar or menu (⋮) > "Install Bhajane".\n- On Android: Tap menu (⋮) > "Install app" or "Add to Home screen".\n- On iPhone/iPad: Tap Share > "Add to Home Screen".');
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                if (isIOS) {
+                    alert('To install on iPhone/iPad:\n1. Tap the Share button (square with arrow) at the bottom.\n2. Scroll down and tap "Add to Home Screen".');
+                } else {
+                    alert('To install the app:\n- On Android: Tap menu (⋮) > "Add to Home screen" or "Install App".\n- On PC: Click the install icon in the URL bar or menu (⋮) > "Install Bhajane".');
+                }
             }
         });
 
+        // Hide when installation succeeds
         window.addEventListener('appinstalled', () => {
             installSection.classList.add('hidden');
+            localStorage.setItem('bhajane_pwa_installed', 'true');
             pwaPrompt = null;
         });
+
+        // Run check on initial page load
+        initInstallUI();
     </script>
 </body>
 </html>
