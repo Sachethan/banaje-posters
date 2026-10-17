@@ -1,1 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Templates</title>
 
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .templates {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .template-card {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            text-decoration: none;
+            color: #222;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .template-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .template-card img {
+            width: 100%;
+            aspect-ratio: 3 / 4;
+            object-fit: cover;
+            display: block;
+        }
+
+        .template-card h3 {
+            font-size: 15px;
+            text-align: center;
+            padding: 12px 8px;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Choose a Template</h2>
+
+    <div class="templates" id="templates"></div>
+
+    <script>
+        const templates = [
+            {
+                id: '1',
+                title: 'ಅನ್ನಪೂರ್ಣ ಆಶೀರ್ವಾದ',
+                previewImage: 'annapoorna/image/preview.webp',
+                url: 'annapoorna/annapoorna1.html'
+            },
+            {
+                id: '2',
+                title: 'ಶ್ರೀ ಶರಭೇಶ್ವರ ಭಜನೆ',
+                previewImage: 'sharabeswara/image/preview.webp',
+                url: 'sharabeswara/sharabeswara.html'
+            }
+        ];
+
+        const container = document.getElementById('templates');
+
+        templates.forEach(template => {
+            const card = document.createElement('a');
+
+            card.className = 'template-card';
+            card.href = template.url;
+
+            card.innerHTML = `
+                <img src="${template.previewImage}"
+                     alt="${template.title}"
+                     loading="lazy">
+
+                <h3>${template.title}</h3>
+            `;
+
+            container.appendChild(card);
+        });
+    </script>
+
+</body>
+</html>
