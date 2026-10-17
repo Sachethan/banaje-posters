@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="color-scheme" content="dark light">
   <title>Sharabeswara Poster Editor</title>
+  <base href="https://sachethan.github.io/banaje-posters/beta/sharabeswara/">
 
   <!-- Tailwind CSS & Font Awesome -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -40,7 +41,6 @@
       padding: 0;
     }
 
-    /* Top Bar */
     header {
       background: var(--panel-bg);
       border-bottom: 1px solid #374151;
@@ -52,7 +52,6 @@
       z-index: 50;
     }
 
-    /* Interactive Scaled Viewport */
     .viewport {
       flex: 1;
       width: 100%;
@@ -79,7 +78,6 @@
       overflow: hidden;
     }
 
-    /* Editable Text Focus Styles */
     [contenteditable="true"] {
       user-select: text;
       outline: none;
@@ -95,13 +93,11 @@
       border-radius: 4px;
     }
 
-    /* High-contrast gradient text effect */
     .gradient-text {
       color: #7f1d1d;
       text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
     }
 
-    /* Bottom Control Bar */
     .bottom-bar {
       background: var(--panel-bg);
       border-top: 1px solid #374151;
@@ -114,13 +110,12 @@
       z-index: 50;
     }
 
-    /* Scanning / Processing Overlay */
     .scanning-overlay {
-      position: absolute;
+      position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0, 0, 0, 0.75);
       backdrop-filter: blur(4px);
-      z-index: 100;
+      z-index: 9999;
       display: none;
       align-items: center;
       justify-content: center;
@@ -134,22 +129,18 @@
 </head>
 <body>
 
-  <!-- Top Action Bar -->
   <header>
     <div class="font-bold text-sm tracking-wide text-amber-400">ಶ್ರೀ ಶರಭೇಶ್ವರ Poster App</div>
     <div class="text-xs text-gray-400">4:5 Fixed (1080 × 1350)</div>
   </header>
 
-  <!-- Interactive Scaled Viewport -->
   <div class="viewport" id="viewport">
-    
-    <!-- Poster Node (Fixed Coordinate System) -->
     <div id="poster-stage">
       
-      <!-- Content Container positioned over poster background -->
+      <!-- Content Container positioned above bottom garland area -->
       <div class="absolute inset-x-0 bottom-16 flex flex-col items-center px-12 z-10 text-center">
         
-        <!-- Header Details (Date, Time, Location) -->
+        <!-- Header Details -->
         <div class="space-y-3 mb-8 w-full text-center">
           <p class="text-3xl font-extrabold gradient-text tracking-wide">
             ದಿನಾಂಕ: <span id="change1" contenteditable="true" class="px-2 py-0.5 rounded"></span>
@@ -163,13 +154,12 @@
           </p>
         </div>
 
-        <!-- Invitation Body Card -->
+        <!-- Invitation Box -->
         <div class="bg-amber-400/50 border-2 border-amber-300/60 backdrop-blur-xs rounded-3xl p-8 w-11/12 shadow-2xl flex flex-col items-center">
           <p class="font-bold text-2xl leading-relaxed text-amber-950 px-4">
             "ಶ್ರೀ ಶರಭೇಶ್ವರ ಭಜನೆ ಮಂಡಳಿಯ" ನೇತೃತ್ವದಲ್ಲಿ ಭಜನೆ ಕಾರ್ಯಕ್ರಮವು ತಮ್ಮೆಲ್ಲರ ಉಪಸ್ಥಿತಿಯಿಂದ ನಡೆಯಲ್ಲಿರುವುದರಿಂದ ಭಜನೆಗೆ ಹೆಚ್ಚಿನ ಸಂಖ್ಯೆಯಲ್ಲಿ ತಾವೆಲ್ಲರೂ ಬಂದು ಪಾಲ್ಗೊಳ್ಳಬೇಕಾಗಿ ಈ ಮೂಲಕ ವಿನಮ್ರತೆಯಿಂದ ಕೇಳಿಕೊಳ್ಳುತ್ತೇವೆ
           </p>
 
-          <!-- Seve Box -->
           <div class="mt-6 bg-white/40 border border-white/60 rounded-2xl py-4 px-8 w-full text-center shadow-inner">
             <p class="font-black text-xl text-red-900 mb-1">ಇಂದಿನ ಭಜನೆ ಸೇವೆ:</p>
             <p id="change2" contenteditable="true" class="font-extrabold text-3xl text-red-950 px-2 py-1 rounded leading-normal">
@@ -181,14 +171,12 @@
       </div>
     </div>
 
-    <!-- Processing Overlay Indicator -->
     <div id="scanningOverlay" class="scanning-overlay">
       <i class="fa-solid fa-spinner fa-spin text-4xl text-sky-400"></i>
       <p class="text-sm font-semibold text-gray-200">ಚಿತ್ರವನ್ನು ಸಿದ್ಧಪಡಿಸಲಾಗುತ್ತಿದೆ...</p>
     </div>
   </div>
 
-  <!-- Bottom Navigation Actions -->
   <div class="bottom-bar">
     <button id="bg-toggle-button" title="Change Background" class="flex items-center gap-2 px-4 py-3 text-lg font-medium text-slate-200 bg-slate-700 rounded-xl hover:bg-slate-600 transition active:scale-95">
       <i class="fa-solid fa-image"></i>
@@ -234,16 +222,11 @@
     const viewport = document.getElementById('viewport');
     const stage = document.getElementById('poster-stage');
 
-    // Dynamic scale to fit any Android or desktop screen perfectly
     function fitPosterStage() {
       const pad = 16;
       const availWidth = viewport.clientWidth - pad;
       const availHeight = viewport.clientHeight - pad;
-
-      const scaleX = availWidth / STAGE_WIDTH;
-      const scaleY = availHeight / STAGE_HEIGHT;
-      const scale = Math.min(scaleX, scaleY);
-
+      const scale = Math.min(availWidth / STAGE_WIDTH, availHeight / STAGE_HEIGHT);
       stage.style.transform = `scale(${scale})`;
     }
 
@@ -251,9 +234,10 @@
     window.addEventListener('orientationchange', () => setTimeout(fitPosterStage, 150));
     fitPosterStage();
 
-    // Font Modal Controls
+    // Font Controls
     const fontModalButton = document.getElementById('font-modal-button');
     const downloadButton = document.getElementById('download-button');
+    const whatsappButton = document.getElementById('whatsapp-button');
     const fontModal = document.getElementById('font-modal');
     const closeModalButton = document.getElementById('close-modal-button');
     const fontOptions = document.querySelectorAll('.font-option');
@@ -284,7 +268,7 @@
       });
     });
 
-    // Date Auto-set (Tomorrow) & Local Persistence
+    // Auto set date (tomorrow) & load persistence
     window.addEventListener('DOMContentLoaded', () => {
       const change1 = document.getElementById('change1');
       if (change1) {
@@ -301,9 +285,7 @@
       ['change2', 'change4', 'change5'].forEach(id => {
         const saved = localStorage.getItem(`sharabeswara_${id}`);
         const el = document.getElementById(id);
-        if (el && saved) {
-          el.textContent = saved;
-        }
+        if (el && saved) el.textContent = saved;
       });
     });
 
@@ -316,7 +298,7 @@
       }
     });
 
-    // Background Image Toggle
+    // Background Image Switcher
     const bgConfig = [
       "image/bg2.webp",
       "image/bg.webp",
@@ -331,27 +313,56 @@
       stage.style.backgroundImage = `url('${bgConfig[currentBgIndex]}')`;
     });
 
+    // Temporary layout lock to prevent flex-box center shifts and black edge cutoffs
+    async function captureStage(format = 'jpeg') {
+      const originalTransform = stage.style.transform;
+      const originalPosition = stage.style.position;
+      const originalLeft = stage.style.left;
+      const originalTop = stage.style.top;
+      const originalMargin = stage.style.margin;
+
+      try {
+        stage.style.position = 'fixed';
+        stage.style.left = '0px';
+        stage.style.top = '0px';
+        stage.style.margin = '0px';
+        stage.style.transform = 'none';
+
+        await document.fonts.ready;
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        const options = {
+          quality: 0.95,
+          cacheBust: true,
+          width: STAGE_WIDTH,
+          height: STAGE_HEIGHT,
+          pixelRatio: 1
+        };
+
+        if (format === 'png') {
+          return await htmlToImage.toPng(stage, options);
+        } else {
+          return await htmlToImage.toJpeg(stage, options);
+        }
+      } finally {
+        stage.style.position = originalPosition;
+        stage.style.left = originalLeft;
+        stage.style.top = originalTop;
+        stage.style.margin = originalMargin;
+        stage.style.transform = originalTransform;
+      }
+    }
+
     // High-Resolution Export
     downloadButton.addEventListener('click', async () => {
       scanningOverlay.classList.add('active');
       downloadButton.disabled = true;
 
       try {
-        await document.fonts.ready;
-
-        const dataUrl = await htmlToImage.toJpeg(stage, {
-          quality: 0.95,
-          cacheBust: true,
-          width: STAGE_WIDTH,
-          height: STAGE_HEIGHT,
-          style: {
-            transform: 'none',
-            transformOrigin: 'top left'
-          }
-        });
+        const dataUrl = await captureStage('jpeg');
 
         const link = document.createElement('a');
-        link.download = `S1_Bajane_${Date.now()}.jpg`;
+        link.download = `Sharabeswara_${Date.now()}.jpg`;
         link.href = dataUrl;
         link.click();
       } catch (err) {
@@ -360,39 +371,32 @@
       } finally {
         scanningOverlay.classList.remove('active');
         downloadButton.disabled = false;
-        fitPosterStage();
       }
     });
 
     // WhatsApp Direct Clipboard Share
-    const whatsappButton = document.getElementById('whatsapp-button');
     whatsappButton.addEventListener('click', async () => {
       scanningOverlay.classList.add('active');
       whatsappButton.disabled = true;
 
       try {
-        await document.fonts.ready;
-        const dataUrl = await htmlToImage.toPng(stage, {
-          cacheBust: true,
-          width: STAGE_WIDTH,
-          height: STAGE_HEIGHT,
-          style: {
-            transform: 'none',
-            transformOrigin: 'top left'
-          }
-        });
+        const dataUrl = await captureStage('png');
+        const res = await fetch(dataUrl);
+        const blob = await res.blob();
 
-        const blob = await (await fetch(dataUrl)).blob();
-        await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-
-        alert("📌 Image copied to clipboard!\nOpen WhatsApp and paste in chat.");
-        window.location.href = "whatsapp://send?text=" + encodeURIComponent("🙏");
+        if (navigator.clipboard && window.ClipboardItem) {
+          await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+          alert("📌 Image copied to clipboard!\nOpen WhatsApp and paste in chat.");
+          window.location.href = "whatsapp://send?text=" + encodeURIComponent("🙏");
+        } else {
+          throw new Error('ClipboardItem API not supported');
+        }
       } catch (err) {
-        alert("Clipboard share is not supported on this browser. Use Download instead.");
+        console.warn('Share error:', err);
+        alert("Clipboard share not supported on this browser. Use Download instead.");
       } finally {
         scanningOverlay.classList.remove('active');
         whatsappButton.disabled = false;
-        fitPosterStage();
       }
     });
   </script>
