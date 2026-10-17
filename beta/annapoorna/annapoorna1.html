@@ -40,7 +40,6 @@
       padding: 0;
     }
 
-    /* Top Bar */
     header {
       background: var(--panel-bg);
       border-bottom: 1px solid #374151;
@@ -52,7 +51,6 @@
       z-index: 50;
     }
 
-    /* Fixed Aspect Ratio Viewport Stage */
     .viewport {
       flex: 1;
       width: 100%;
@@ -65,7 +63,7 @@
       padding: 12px;
     }
 
-    /* Fixed 4:5 Poster Scaler Canvas (1080 x 1350) */
+    /* Fixed 4:5 Poster Canvas (1080 x 1350) */
     #poster-stage {
       width: 1080px;
       height: 1350px;
@@ -79,7 +77,6 @@
       overflow: hidden;
     }
 
-    /* Editable Text Focus Styles */
     [contenteditable="true"] {
       user-select: text;
       outline: none;
@@ -95,7 +92,6 @@
       border-radius: 4px;
     }
 
-    /* Bottom Control Bar */
     .bottom-bar {
       background: var(--panel-bg);
       border-top: 1px solid #374151;
@@ -108,7 +104,6 @@
       z-index: 50;
     }
 
-    /* Scanning / Processing Overlay */
     .scanning-overlay {
       position: absolute;
       inset: 0;
@@ -128,19 +123,14 @@
 </head>
 <body>
 
-  <!-- Top Action Bar -->
   <header>
-    <div class="font-bold text-sm tracking-wide text-amber-400">ಅನ್ನಪೂರ್ಣ Poster App</div>
+    <div class="font-bold text-sm tracking-wide text-amber-400">ಅನ್ನಪೂರ್ಣ Poster App 2</div>
     <div class="text-xs text-gray-400">4:5 Fixed (1080 × 1350)</div>
   </header>
 
-  <!-- Interactive Scaled Viewport -->
   <div class="viewport" id="viewport">
-    
-    <!-- Poster Node (Fixed Coordinate System) -->
     <div id="poster-stage">
-      
-      <!-- Top Decorative Border Frame -->
+      <!-- Border frame -->
       <div class="absolute inset-0 pointer-events-none opacity-40 z-30">
         <img src="image/boder.png" class="w-full h-full object-fill" alt="" />
       </div>
@@ -150,7 +140,7 @@
         <img src="image/bdr1.png" class="w-full object-cover" alt="" />
       </div>
 
-      <!-- Bottom Corner Ornament -->
+      <!-- Bottom Ornament -->
       <div class="absolute -bottom-4 -left-4 w-[420px] pointer-events-none z-30 opacity-80">
         <img src="image/1.png" class="w-full h-auto" alt="" />
       </div>
@@ -160,9 +150,7 @@
         <img src="image/bdr2.png" class="w-full object-cover" alt="" />
       </div>
 
-      <!-- Inner Content Layout -->
       <div class="absolute inset-0 flex flex-col items-center justify-between py-12 px-8 z-10">
-        
         <!-- Header Section -->
         <div class="w-full flex flex-col items-center text-center mt-4">
           <div class="text-yellow-100 font-semibold text-2xl tracking-wide leading-relaxed space-y-1">
@@ -170,7 +158,6 @@
             <p>|| ಶ್ರೀ ಅಂಬಿಕಾ ಅನ್ನಪೂರ್ಣೇಶ್ವರಿ ನಮಃ ||</p>
           </div>
 
-          <!-- Deity Image -->
           <div class="mt-4">
             <img 
               src="image/devi.jpeg" 
@@ -180,20 +167,18 @@
             />
           </div>
 
-          <!-- Trust Title Box -->
           <div class="mt-4 bg-gradient-to-b from-orange-500 to-orange-600 rounded-2xl shadow-xl border-2 border-orange-300 w-11/12 py-3 px-4 text-center">
             <h1 class="font-black text-3xl text-yellow-200 tracking-wide">ಆಶೀರ್ವಾದ ಗೆಳೆಯರ ಬಳಗ (ರಿ.) ಸೇವಾ ಟ್ರಸ್ಟ್</h1>
             <p class="font-semibold text-lg text-yellow-100 mt-1">ಪೆರ್ಲ ಬಿಯಪಾದೆ</p>
           </div>
 
-          <!-- Sub-committee Box -->
           <div class="mt-3 bg-gradient-to-b from-red-600 to-red-700 rounded-xl shadow-lg border border-orange-300 px-6 py-2 text-center">
             <h2 class="font-black text-2xl text-yellow-200">ಅನ್ನಪೂರ್ಣ ಆಶೀರ್ವಾದ ಸೇವಾ ಸಮಿತಿ</h2>
             <p class="font-semibold text-sm text-white">ಇದರ ವತಿಯಿಂದ</p>
           </div>
         </div>
 
-        <!-- Main Editable Content Card -->
+        <!-- Editable Content Box -->
         <div class="bg-black/40 border border-white/40 backdrop-blur-sm rounded-3xl p-8 w-11/12 text-center text-yellow-50 shadow-2xl flex flex-col items-center justify-center space-y-5 my-auto">
           <p class="font-bold text-2xl leading-relaxed text-yellow-100">
             ಜ್ಞಾನಮಂದಿರ ಕಟ್ಟಡ ನಿರ್ಮಾಣ ಮಾಡುವ<br />
@@ -216,23 +201,19 @@
             </p>
           </div>
 
-          <!-- Bottom Divider -->
           <div class="w-3/4 border-b-2 border-white/60 pt-2"></div>
         </div>
 
-        <!-- Space reserved for bottom margin above garland -->
         <div class="h-10"></div>
       </div>
     </div>
 
-    <!-- Processing Overlay Indicator -->
     <div id="scanningOverlay" class="scanning-overlay">
       <i class="fa-solid fa-spinner fa-spin text-4xl text-sky-400"></i>
       <p class="text-sm font-semibold text-gray-200">ಚಿತ್ರವನ್ನು ಸಿದ್ಧಪಡಿಸಲಾಗುತ್ತಿದೆ...</p>
     </div>
   </div>
 
-  <!-- Bottom Navigation Actions -->
   <div class="bottom-bar">
     <button id="font-modal-button" class="flex items-center gap-2 px-5 py-3 text-lg font-medium text-slate-200 bg-slate-700 rounded-xl hover:bg-slate-600 transition active:scale-95">
       <i class="fa-solid fa-font"></i>
@@ -273,16 +254,11 @@
     const viewport = document.getElementById('viewport');
     const stage = document.getElementById('poster-stage');
 
-    // Dynamically scale the fixed 1080x1350 container to fit any screen
     function fitPosterStage() {
       const pad = 16;
       const availWidth = viewport.clientWidth - pad;
       const availHeight = viewport.clientHeight - pad;
-
-      const scaleX = availWidth / STAGE_WIDTH;
-      const scaleY = availHeight / STAGE_HEIGHT;
-      const scale = Math.min(scaleX, scaleY);
-
+      const scale = Math.min(availWidth / STAGE_WIDTH, availHeight / STAGE_HEIGHT);
       stage.style.transform = `scale(${scale})`;
     }
 
@@ -290,9 +266,10 @@
     window.addEventListener('orientationchange', () => setTimeout(fitPosterStage, 150));
     fitPosterStage();
 
-    // Font Modal Controls
+    // Modal controls
     const fontModalButton = document.getElementById('font-modal-button');
     const downloadButton = document.getElementById('download-button');
+    const whatsappButton = document.getElementById('whatsapp-button');
     const fontModal = document.getElementById('font-modal');
     const closeModalButton = document.getElementById('close-modal-button');
     const fontOptions = document.querySelectorAll('.font-option');
@@ -323,15 +300,7 @@
       });
     });
 
-    // Date calculations & local persistence
-    function formatDate(ddmmyyyy) {
-      if (!ddmmyyyy) return "";
-      const [dd, mm, yyyy] = ddmmyyyy.split("-");
-      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      const month = months[parseInt(mm, 10) - 1] || "Month";
-      return `${dd}-${month}-${yyyy}`;
-    }
-
+    // Dates & Persistence
     window.addEventListener('DOMContentLoaded', () => {
       const change1 = document.getElementById('change1');
       if (change1) {
@@ -352,11 +321,9 @@
       }
 
       ['change2', 'change4'].forEach(id => {
-        const saved = localStorage.getItem(`poster_${id}`);
-        if (saved) {
-          const el = document.getElementById(id);
-          if (el) el.textContent = saved;
-        }
+        const saved = localStorage.getItem(`annapoorna_${id}`);
+        const el = document.getElementById(id);
+        if (el && saved) el.textContent = saved;
       });
     });
 
@@ -364,61 +331,75 @@
       const el = document.getElementById(id);
       if (el) {
         el.addEventListener('blur', () => {
-          localStorage.setItem(`poster_${id}`, el.textContent);
+          localStorage.setItem(`annapoorna_${id}`, el.textContent);
         });
       }
     });
 
-    // High-Resolution Export Workflow
+    // Off-screen clone helper for exact boundary capture
+    function createOffscreenClone() {
+      const clone = stage.cloneNode(true);
+      clone.style.transform = 'none';
+      clone.style.position = 'fixed';
+      clone.style.left = '-9999px';
+      clone.style.top = '0px';
+      clone.style.width = `${STAGE_WIDTH}px`;
+      clone.style.height = `${STAGE_HEIGHT}px`;
+      clone.style.margin = '0';
+      clone.style.zIndex = '-1000';
+      document.body.appendChild(clone);
+      return clone;
+    }
+
+    // Download Handler (Exact Frame)
     downloadButton.addEventListener('click', async () => {
       scanningOverlay.classList.add('active');
       downloadButton.disabled = true;
 
+      const clone = createOffscreenClone();
+
       try {
         await document.fonts.ready;
+        await new Promise(r => setTimeout(r, 120));
 
-        // Render at native 1080x1350 resolution regardless of screen scale
-        const dataUrl = await htmlToImage.toJpeg(stage, {
+        const dataUrl = await htmlToImage.toJpeg(clone, {
           quality: 0.95,
           cacheBust: true,
           width: STAGE_WIDTH,
           height: STAGE_HEIGHT,
-          style: {
-            transform: 'none', // Reset scaling during image capture
-            transformOrigin: 'top left'
-          }
+          pixelRatio: 1
         });
 
         const link = document.createElement('a');
-        link.download = `Bajane_${Date.now()}.jpg`;
+        link.download = `Annapoorna_${Date.now()}.jpg`;
         link.href = dataUrl;
         link.click();
       } catch (err) {
-        console.error('Export failed:', err);
-        alert('Download failed. Please check browser image permissions.');
+        console.error('Download error:', err);
+        alert('Download failed. Please try again.');
       } finally {
+        if (clone && clone.parentNode) clone.parentNode.removeChild(clone);
         scanningOverlay.classList.remove('active');
         downloadButton.disabled = false;
-        fitPosterStage(); // Re-apply scale
       }
     });
 
-    // WhatsApp Direct Clipboard Share
-    const whatsappButton = document.getElementById('whatsapp-button');
+    // WhatsApp Share Handler
     whatsappButton.addEventListener('click', async () => {
       scanningOverlay.classList.add('active');
       whatsappButton.disabled = true;
 
+      const clone = createOffscreenClone();
+
       try {
         await document.fonts.ready;
-        const dataUrl = await htmlToImage.toPng(stage, {
+        await new Promise(r => setTimeout(r, 120));
+
+        const dataUrl = await htmlToImage.toPng(clone, {
           cacheBust: true,
           width: STAGE_WIDTH,
           height: STAGE_HEIGHT,
-          style: {
-            transform: 'none',
-            transformOrigin: 'top left'
-          }
+          pixelRatio: 1
         });
 
         const blob = await (await fetch(dataUrl)).blob();
@@ -427,11 +408,11 @@
         alert("📌 Image copied to clipboard!\nOpen WhatsApp and paste in chat.");
         window.location.href = "whatsapp://send?text=" + encodeURIComponent("🙏");
       } catch (err) {
-        alert("Clipboard share is not supported on this browser. Use Download instead.");
+        alert("Clipboard share not supported on this browser. Use Download instead.");
       } finally {
+        if (clone && clone.parentNode) clone.parentNode.removeChild(clone);
         scanningOverlay.classList.remove('active');
         whatsappButton.disabled = false;
-        fitPosterStage();
       }
     });
   </script>
