@@ -1,176 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Templates</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Templates & Screen Inspector</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-        body {
-            margin: 0;
-            padding: 20px;
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-        }
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-        h2 {
-            text-align: center;
-            margin-bottom: 25px;
-        }
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+    }
 
-        .templates {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-            max-width: 900px;
-            margin: auto;
-        }
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+    }
 
-        .template-card {
-            background: #fff;
-            border-radius: 12px;
-            overflow: hidden;
-            cursor: pointer;
-            text-decoration: none;
-            color: #222;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s;
-        }
+    .templates {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+      max-width: 900px;
+      margin: 0 auto 40px auto;
+    }
 
-        .template-card:hover {
-            transform: translateY(-5px);
-        }
+    .template-card {
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      text-decoration: none;
+      color: #222;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e2e8f0;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
 
-        .template-card img {
-            width: 100%;
-            aspect-ratio: 3 / 4;
-            object-fit: cover;
-            display: block;
-        }
+    .template-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
 
-        .template-card h3 {
-            font-size: 15px;
-            text-align: center;
-            padding: 12px 8px;
-            margin: 0;
-        }
-    </style>
+    .template-card img {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+      display: block;
+      background-color: #e2e8f0;
+    }
+
+    .template-card h3 {
+      font-size: 15px;
+      text-align: center;
+      padding: 12px 8px;
+      margin: 0;
+    }
+  </style>
 </head>
 
 <body>
 
-    <h2>Choose a Template</h2>
+  <h2>Choose a Template</h2>
 
-    <div class="templates" id="templates"></div>
+  <div class="templates" id="templates"></div>
 
-    <script>
-        const templates = [
-            {
-                id: '1',
-                title: 'ಅನ್ನಪೂರ್ಣ ಆಶೀರ್ವಾದ',
-                previewImage: 'annapoorna/image/preview.webp',
-                url: 'annapoorna/annapoorna1.html'
-            },
-            {
-                id: '2',
-                title: 'ಶ್ರೀ ಶರಭೇಶ್ವರ ಭಜನೆ',
-                previewImage: 'sharabeswara/image/preview.webp',
-                url: 'sharabeswara/sharabeswara.html'
-            }
-        ];
-
-        const container = document.getElementById('templates');
-
-        templates.forEach(template => {
-            const card = document.createElement('a');
-
-            card.className = 'template-card';
-            card.href = template.url;
-
-            card.innerHTML = `
-                <img src="${template.previewImage}"
-                     alt="${template.title}"
-                     loading="lazy">
-
-                <h3>${template.title}</h3>
-            `;
-
-            container.appendChild(card);
-        });
-    </script>
+  <!-- Screen & Device Inspector Section -->
+  <div style="max-width: 900px; margin: 0 auto; background-color: #0f172a; border-radius: 16px; padding: 24px; color: #f8fafc; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);">
     
-  <div style="max-width: 900px; margin: 0 auto;">
-    
-    <!-- Header -->
-    <header style="margin-bottom: 24px; border-bottom: 1px solid #334155; padding-bottom: 16px;">
-      <h1 style="margin: 0 0 8px 0; font-size: 26px; font-weight: 700; color: #38bdf8;">Screen & Device Inspector</h1>
-      <p style="margin: 0; color: #94a3b8; font-size: 14px;">Values update automatically when resizing your browser or rotating your device.</p>
+    <header style="margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 12px;">
+      <h3 style="margin: 0 0 6px 0; font-size: 20px; font-weight: 700; color: #38bdf8;">Screen & Device Inspector</h3>
+      <p style="margin: 0; color: #94a3b8; font-size: 13px;">Updates dynamically on screen resize or orientation change.</p>
     </header>
 
     <!-- Metrics Cards Grid -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 24px;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-bottom: 20px;">
       
-      <!-- Card 1: Physical / OS Screen -->
-      <div style="background-color: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 18px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);">
-        <h2 style="margin: 0 0 12px 0; font-size: 16px; color: #a78bfa; text-transform: uppercase; letter-spacing: 0.05em;">Hardware Screen</h2>
-        <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #334155;">
+      <!-- Hardware Screen -->
+      <div style="background-color: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 14px;">
+        <h4 style="margin: 0 0 10px 0; font-size: 14px; color: #a78bfa; text-transform: uppercase;">Hardware Screen</h4>
+        <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed #334155; font-size: 13px;">
           <span style="color: #94a3b8;">Total Width:</span>
           <span id="screen-width" style="font-weight: 600; font-family: monospace;">-</span>
         </div>
-        <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #334155;">
+        <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed #334155; font-size: 13px;">
           <span style="color: #94a3b8;">Total Height:</span>
           <span id="screen-height" style="font-weight: 600; font-family: monospace;">-</span>
         </div>
-        <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #334155;">
+        <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed #334155; font-size: 13px;">
           <span style="color: #94a3b8;">Avail. Width:</span>
           <span id="avail-width" style="font-weight: 600; font-family: monospace;">-</span>
         </div>
-        <div style="display: flex; justify-content: space-between; padding: 6px 0;">
+        <div style="display: flex; justify-content: space-between; padding: 4px 0; font-size: 13px;">
           <span style="color: #94a3b8;">Avail. Height:</span>
           <span id="avail-height" style="font-weight: 600; font-family: monospace;">-</span>
         </div>
       </div>
 
-      <!-- Card 2: Viewport / Browser Window -->
-      <div style="background-color: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 18px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);">
-        <h2 style="margin: 0 0 12px 0; font-size: 16px; color: #34d399; text-transform: uppercase; letter-spacing: 0.05em;">Browser Viewport</h2>
-        <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #334155;">
+      <!-- Browser Viewport -->
+      <div style="background-color: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 14px;">
+        <h4 style="margin: 0 0 10px 0; font-size: 14px; color: #34d399; text-transform: uppercase;">Browser Viewport</h4>
+        <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed #334155; font-size: 13px;">
           <span style="color: #94a3b8;">Inner Width:</span>
           <span id="viewport-width" style="font-weight: 600; font-family: monospace;">-</span>
         </div>
-        <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #334155;">
+        <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed #334155; font-size: 13px;">
           <span style="color: #94a3b8;">Inner Height:</span>
           <span id="viewport-height" style="font-weight: 600; font-family: monospace;">-</span>
         </div>
-        <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #334155;">
-          <span style="color: #94a3b8;">Window Outer Width:</span>
+        <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed #334155; font-size: 13px;">
+          <span style="color: #94a3b8;">Outer Width:</span>
           <span id="outer-width" style="font-weight: 600; font-family: monospace;">-</span>
         </div>
-        <div style="display: flex; justify-content: space-between; padding: 6px 0;">
-          <span style="color: #94a3b8;">Window Outer Height:</span>
+        <div style="display: flex; justify-content: space-between; padding: 4px 0; font-size: 13px;">
+          <span style="color: #94a3b8;">Outer Height:</span>
           <span id="outer-height" style="font-weight: 600; font-family: monospace;">-</span>
         </div>
       </div>
 
-      <!-- Card 3: Display Properties & Ratio -->
-      <div style="background-color: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 18px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);">
-        <h2 style="margin: 0 0 12px 0; font-size: 16px; color: #f472b6; text-transform: uppercase; letter-spacing: 0.05em;">Display Specs</h2>
-        <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #334155;">
+      <!-- Display Specs -->
+      <div style="background-color: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 14px;">
+        <h4 style="margin: 0 0 10px 0; font-size: 14px; color: #f472b6; text-transform: uppercase;">Display Specs</h4>
+        <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed #334155; font-size: 13px;">
           <span style="color: #94a3b8;">Pixel Ratio (DPR):</span>
           <span id="device-dpr" style="font-weight: 600; font-family: monospace;">-</span>
         </div>
-        <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #334155;">
+        <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed #334155; font-size: 13px;">
           <span style="color: #94a3b8;">Color Depth:</span>
           <span id="color-depth" style="font-weight: 600; font-family: monospace;">-</span>
         </div>
-        <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #334155;">
+        <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed #334155; font-size: 13px;">
           <span style="color: #94a3b8;">Orientation:</span>
           <span id="orientation" style="font-weight: 600; font-family: monospace;">-</span>
         </div>
-        <div style="display: flex; justify-content: space-between; padding: 6px 0;">
+        <div style="display: flex; justify-content: space-between; padding: 4px 0; font-size: 13px;">
           <span style="color: #94a3b8;">Aspect Ratio:</span>
           <span id="aspect-ratio" style="font-weight: 600; font-family: monospace;">-</span>
         </div>
@@ -179,22 +150,54 @@
     </div>
 
     <!-- Active Viewport Preview Banner -->
-    <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid #3b82f6; border-radius: 10px; padding: 20px; text-align: center;">
-      <div style="font-size: 13px; text-transform: uppercase; color: #60a5fa; letter-spacing: 0.08em; margin-bottom: 6px;">Live Viewport Size</div>
-      <div id="live-viewport-banner" style="font-size: 32px; font-weight: 700; color: #ffffff; font-family: monospace;">0 × 0 px</div>
+    <div style="background: #1e293b; border: 1px solid #3b82f6; border-radius: 8px; padding: 14px; text-align: center;">
+      <div style="font-size: 12px; text-transform: uppercase; color: #60a5fa; letter-spacing: 0.08em; margin-bottom: 4px;">Live Viewport Size</div>
+      <div id="live-viewport-banner" style="font-size: 24px; font-weight: 700; color: #ffffff; font-family: monospace;">0 × 0 px</div>
     </div>
 
   </div>
 
   <script>
+    // Templates list
+    const templates = [
+      {
+        id: '1',
+        title: 'ಅನ್ನಪೂರ್ಣ ಆಶೀರ್ವಾದ',
+        previewImage: 'annapoorna/image/preview.webp',
+        url: 'annapoorna/annapoorna1.html'
+      },
+      {
+        id: '2',
+        title: 'ಶ್ರೀ ಶರಭೇಶ್ವರ ಭಜನೆ',
+        previewImage: 'sharabeswara/image/preview.webp',
+        url: 'sharabeswara/sharabeswara.html'
+      }
+    ];
+
+    const container = document.getElementById('templates');
+
+    templates.forEach(template => {
+      const card = document.createElement('a');
+      card.className = 'template-card';
+      card.href = template.url;
+
+      card.innerHTML = `
+        <img src="${template.previewImage}" alt="${template.title}" loading="lazy" onerror="this.src='https://via.placeholder.com/300x400?text=No+Image'">
+        <h3>${template.title}</h3>
+      `;
+
+      container.appendChild(card);
+    });
+
+    // Screen & Dimension Tracker
     function updateDimensions() {
-      // 1. Hardware Screen
+      // Hardware
       document.getElementById('screen-width').textContent = screen.width + ' px';
       document.getElementById('screen-height').textContent = screen.height + ' px';
       document.getElementById('avail-width').textContent = screen.availWidth + ' px';
       document.getElementById('avail-height').textContent = screen.availHeight + ' px';
 
-      // 2. Viewport / Window
+      // Viewport
       const innerW = window.innerWidth;
       const innerH = window.innerHeight;
       document.getElementById('viewport-width').textContent = innerW + ' px';
@@ -202,31 +205,28 @@
       document.getElementById('outer-width').textContent = window.outerWidth + ' px';
       document.getElementById('outer-height').textContent = window.outerHeight + ' px';
 
-      // 3. Display Specs
+      // Specs
       document.getElementById('device-dpr').textContent = (window.devicePixelRatio || 1) + 'x';
       document.getElementById('color-depth').textContent = screen.colorDepth + '-bit';
 
-      const orientationType = (screen.orientation && screen.orientation.type) 
-        ? screen.orientation.type.replace('-primary', '') 
+      const orientationType = (screen.orientation && screen.orientation.type)
+        ? screen.orientation.type.replace('-primary', '')
         : (innerW > innerH ? 'landscape' : 'portrait');
       document.getElementById('orientation').textContent = orientationType;
 
-      // Aspect ratio (simplified)
-      const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+      const gcd = (a, b) => (b === 0 ? a : gcd(b, a % b));
       const divisor = gcd(innerW, innerH);
       document.getElementById('aspect-ratio').textContent = (innerW / divisor) + ':' + (innerH / divisor);
 
-      // Banner display
       document.getElementById('live-viewport-banner').textContent = innerW + ' × ' + innerH + ' px';
     }
-    // Attach listeners
+
     window.addEventListener('resize', updateDimensions);
     window.addEventListener('orientationchange', updateDimensions);
     if (screen.orientation) {
       screen.orientation.addEventListener('change', updateDimensions);
     }
 
-    // Initial run
     updateDimensions();
   </script>
 
