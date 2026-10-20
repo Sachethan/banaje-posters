@@ -103,5 +103,134 @@
         });
     </script>
 
+  <div style="max-width: 900px; margin: 0 auto;">
+    
+    <!-- Header -->
+    <header style="margin-bottom: 24px; border-bottom: 1px solid #334155; padding-bottom: 16px;">
+      <h1 style="margin: 0 0 8px 0; font-size: 26px; font-weight: 700; color: #38bdf8;">Screen & Device Inspector</h1>
+      <p style="margin: 0; color: #94a3b8; font-size: 14px;">Values update automatically when resizing your browser or rotating your device.</p>
+    </header>
+
+    <!-- Metrics Cards Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 24px;">
+      
+      <!-- Card 1: Physical / OS Screen -->
+      <div style="background-color: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 18px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);">
+        <h2 style="margin: 0 0 12px 0; font-size: 16px; color: #a78bfa; text-transform: uppercase; letter-spacing: 0.05em;">Hardware Screen</h2>
+        <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #334155;">
+          <span style="color: #94a3b8;">Total Width:</span>
+          <span id="screen-width" style="font-weight: 600; font-family: monospace;">-</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #334155;">
+          <span style="color: #94a3b8;">Total Height:</span>
+          <span id="screen-height" style="font-weight: 600; font-family: monospace;">-</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #334155;">
+          <span style="color: #94a3b8;">Avail. Width:</span>
+          <span id="avail-width" style="font-weight: 600; font-family: monospace;">-</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 6px 0;">
+          <span style="color: #94a3b8;">Avail. Height:</span>
+          <span id="avail-height" style="font-weight: 600; font-family: monospace;">-</span>
+        </div>
+      </div>
+
+      <!-- Card 2: Viewport / Browser Window -->
+      <div style="background-color: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 18px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);">
+        <h2 style="margin: 0 0 12px 0; font-size: 16px; color: #34d399; text-transform: uppercase; letter-spacing: 0.05em;">Browser Viewport</h2>
+        <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #334155;">
+          <span style="color: #94a3b8;">Inner Width:</span>
+          <span id="viewport-width" style="font-weight: 600; font-family: monospace;">-</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #334155;">
+          <span style="color: #94a3b8;">Inner Height:</span>
+          <span id="viewport-height" style="font-weight: 600; font-family: monospace;">-</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #334155;">
+          <span style="color: #94a3b8;">Window Outer Width:</span>
+          <span id="outer-width" style="font-weight: 600; font-family: monospace;">-</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 6px 0;">
+          <span style="color: #94a3b8;">Window Outer Height:</span>
+          <span id="outer-height" style="font-weight: 600; font-family: monospace;">-</span>
+        </div>
+      </div>
+
+      <!-- Card 3: Display Properties & Ratio -->
+      <div style="background-color: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 18px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);">
+        <h2 style="margin: 0 0 12px 0; font-size: 16px; color: #f472b6; text-transform: uppercase; letter-spacing: 0.05em;">Display Specs</h2>
+        <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #334155;">
+          <span style="color: #94a3b8;">Pixel Ratio (DPR):</span>
+          <span id="device-dpr" style="font-weight: 600; font-family: monospace;">-</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #334155;">
+          <span style="color: #94a3b8;">Color Depth:</span>
+          <span id="color-depth" style="font-weight: 600; font-family: monospace;">-</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #334155;">
+          <span style="color: #94a3b8;">Orientation:</span>
+          <span id="orientation" style="font-weight: 600; font-family: monospace;">-</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 6px 0;">
+          <span style="color: #94a3b8;">Aspect Ratio:</span>
+          <span id="aspect-ratio" style="font-weight: 600; font-family: monospace;">-</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Active Viewport Preview Banner -->
+    <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid #3b82f6; border-radius: 10px; padding: 20px; text-align: center;">
+      <div style="font-size: 13px; text-transform: uppercase; color: #60a5fa; letter-spacing: 0.08em; margin-bottom: 6px;">Live Viewport Size</div>
+      <div id="live-viewport-banner" style="font-size: 32px; font-weight: 700; color: #ffffff; font-family: monospace;">0 × 0 px</div>
+    </div>
+
+  </div>
+
+  <script>
+    function updateDimensions() {
+      // 1. Hardware Screen
+      document.getElementById('screen-width').textContent = screen.width + ' px';
+      document.getElementById('screen-height').textContent = screen.height + ' px';
+      document.getElementById('avail-width').textContent = screen.availWidth + ' px';
+      document.getElementById('avail-height').textContent = screen.availHeight + ' px';
+
+      // 2. Viewport / Window
+      const innerW = window.innerWidth;
+      const innerH = window.innerHeight;
+      document.getElementById('viewport-width').textContent = innerW + ' px';
+      document.getElementById('viewport-height').textContent = innerH + ' px';
+      document.getElementById('outer-width').textContent = window.outerWidth + ' px';
+      document.getElementById('outer-height').textContent = window.outerHeight + ' px';
+
+      // 3. Display Specs
+      document.getElementById('device-dpr').textContent = (window.devicePixelRatio || 1) + 'x';
+      document.getElementById('color-depth').textContent = screen.colorDepth + '-bit';
+
+      const orientationType = (screen.orientation && screen.orientation.type) 
+        ? screen.orientation.type.replace('-primary', '') 
+        : (innerW > innerH ? 'landscape' : 'portrait');
+      document.getElementById('orientation').textContent = orientationType;
+
+      // Aspect ratio (simplified)
+      const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+      const divisor = gcd(innerW, innerH);
+      document.getElementById('aspect-ratio').textContent = (innerW / divisor) + ':' + (innerH / divisor);
+
+      // Banner display
+      document.getElementById('live-viewport-banner').textContent = innerW + ' × ' + innerH + ' px';
+    }
+
+    // Attach listeners
+    window.addEventListener('resize', updateDimensions);
+    window.addEventListener('orientationchange', updateDimensions);
+    if (screen.orientation) {
+      screen.orientation.addEventListener('change', updateDimensions);
+    }
+
+    // Initial run
+    updateDimensions();
+  </script>
+
 </body>
 </html>
