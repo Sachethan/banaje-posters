@@ -26,5 +26,105 @@
 }
 
 .last-line {
-  bottom: -25px;
+  bottom: -100px;
 }
+
+.line-divider {
+  width: 100%;
+  height: 50px; /* Adjust height to match your line's design */
+  
+  /* Set your desired color here: */
+  background-color: #fcfcfc; /* Red / Gold / White / etc. */
+
+  /* Mask it with your PNG */
+  -webkit-mask-image: url('image/last_line.png');
+  mask-image: url('image/last_line.png');
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  
+  -webkit-mask-position: center;
+  mask-position: center;
+  
+  -webkit-mask-size: cover; /* or contain */
+  mask-size: cover;
+}
+
+       .scanning-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+          z-index:1;
+            /* Layer 1: Professional blue scan line (top-to-bottom) */
+            background-image: linear-gradient(180deg, transparent,
+                                             rgba(100, 180, 255, 0.3),  /* Light blue with transparency */
+                                             rgba(100, 180, 255, 0.6),  /* Slightly darker blue with transparency */
+                                             rgba(100, 180, 255, 0.3),
+                                             transparent),
+                            /* Layer 2: Stars - small white radial gradients repeated */
+                            radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.9) 1px, transparent 2px);
+
+            background-size: 100% 200%, 60px 60px; /* Scan line size (100% width, 200% height for vertical sweep), Star pattern size (60x60px grid) */
+            background-repeat: no-repeat, repeat; /* Scan line doesnt repeat, stars repeat to fill */
+            animation: scan-animation 2s infinite linear; /* Adjust duration as needed */
+            pointer-events: none; /* Allows clicks to pass through to elements below */
+            opacity: 0; /* Hidden by default */
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .scanning-overlay.active {
+            opacity: 1;
+        }
+
+.scanning-overlay {
+
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.scanning-overlay div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+
+img.logo {
+    width: 75px; /* Adjust the size of your logo */
+    height: auto;
+    z-index: 1000;
+  filter: invert(100%);
+}
+
+.scanning-overlay span {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border: 4px solid transparent;
+    border-top: 4px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 1000;
+}
+
+/* Animation for the spinner */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+        /* Animation: Smooth Zoom In for the centered modal */
+        @keyframes zoom-in {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
