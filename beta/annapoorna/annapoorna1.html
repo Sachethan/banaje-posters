@@ -1,28 +1,33 @@
 <!DOCTYPE html>
-<html lang="kn">
+<html lang="kn" class="dark">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta name="color-scheme" content="dark light">
-  <title>ಅನ್ನಪೂರ್ಣ Poster Editor</title>
-  <base href="https://sachethan.github.io/banaje-posters/beta/annapoorna/">
+  <meta name="color-scheme" content="dark">
+  <title>Annapoorna Poster Editor</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;700;900&family=Tiro+Kannada&family=Baloo+Tamma+2&family=Mallanna&display=swap"
+    rel="stylesheet" />
+
   <!-- Tailwind CSS & Font Awesome -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
-  <!-- Google Fonts -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@400;700;900&family=Tiro+Kannada&family=Baloo+Tamma+2&family=Mallanna&display=swap"
-    rel="stylesheet" />
+  <base href="https://sachethan.github.io/banaje-posters/beta/annapoorna/">
 
-  <!-- html-to-image -->
+  <!-- html-to-image (for download logic) -->
   <script src="https://unpkg.com/html-to-image"></script>
 
   <style>
     :root {
-      --bg-dark: #111827;
-      --panel-bg: #1f2937;
+      --bg-dark: #0b0f19;
+      --panel-bg: rgba(17, 24, 39, 0.85);
+      --border-color: rgba(255, 255, 255, 0.08);
     }
 
     * {
@@ -34,12 +39,13 @@
     html, body {
       -webkit-text-size-adjust: 100%;
       text-size-adjust: 100%;
+      height: 100%;
     }
 
     body {
-      font-family: 'Noto Sans Kannada', sans-serif;
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Kannada', sans-serif;
       background-color: var(--bg-dark);
-      color: #ffffff;
+      color: #f3f4f6;
       height: 100dvh;
       display: flex;
       flex-direction: column;
@@ -48,10 +54,13 @@
       padding: 0;
     }
 
+    /* Professional Glass Header */
     header {
       background: var(--panel-bg);
-      border-bottom: 1px solid #374151;
-      padding: 10px 16px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 12px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -67,7 +76,11 @@
       justify-content: center;
       position: relative;
       overflow: hidden;
-      background: #030712;
+      background-color: #070a12;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.07) 0%, transparent 50%),
+        radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+      background-size: 100% 100%, 24px 24px;
       padding: 12px;
     }
 
@@ -77,7 +90,8 @@
       height: 1350px;
       position: absolute;
       transform-origin: center center;
-      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
       background-image: url('image/bg.webp');
       background-size: cover;
       background-position: center;
@@ -92,45 +106,32 @@
     }
 
     [contenteditable="true"]:hover {
-      outline: 2px dashed rgba(255, 255, 255, 0.6);
-      background-color: rgba(0, 0, 0, 0.15);
+      outline: 2px dashed rgba(251, 191, 36, 0.7);
+      background-color: rgba(0, 0, 0, 0.2);
     }
 
     [contenteditable="true"]:focus {
       outline: 3px solid #fbbf24;
-      background-color: rgba(0, 0, 0, 0.35);
+      background-color: rgba(0, 0, 0, 0.4);
       border-radius: 4px;
     }
 
+    /* Bottom Bar */
     .bottom-bar {
       background: var(--panel-bg);
-      border-top: 1px solid #374151;
-      padding: 10px 16px calc(50px + env(safe-area-inset-bottom, 0px));
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border-color);
+      padding: 12px 20px calc(12px + env(safe-area-inset-bottom, 0px));
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
       flex-shrink: 0;
       z-index: 50;
     }
 
-    .scanning-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgb(31, 30, 30);
-      backdrop-filter: blur(4px);
-      z-index: 9999;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .scanning-overlay.active {
-      display: flex;
-    }
-
+    /* Original Poster-Stage Specific Styles */
     .Header-cust-img {
       margin-top: 50px;
     }
@@ -176,14 +177,19 @@
       mask-size: cover;
     }
 
-    @keyframes scan-animation {
-      0% {
-        background-position: 0 -200%, 0 0;
-      }
-      100% {
-        background-position: 0 200%, 0 100%;
-      }
-    }
+    /* Your Original Scanning Overlay Styles */
+    .scanning-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgb(31, 30, 30);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+    }    
 
     .scanning-overlay {
       position: absolute;
@@ -222,6 +228,15 @@
       position: relative;
     }
 
+    @keyframes scan-animation {
+      0% {
+        background-position: 0 -200%, 0 0;
+      }
+      100% {
+        background-position: 0 200%, 0 100%;
+      }
+    }
+
     img.logo {
       width: 75px;
       height: auto;
@@ -241,19 +256,38 @@
     }
 
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
     }
   </style>
 </head>
 
 <body>
 
+  <!-- Header -->
   <header>
-    <div class="font-bold text-sm tracking-wide text-amber-400">ಅನ್ನಪೂರ್ಣ Poster App</div>
-    <div class="text-xs text-gray-400">4:5 Fixed (1080 × 1350)</div>
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+        <i class="fa-solid fa-layer-group text-sm"></i>
+      </div>
+      <div>
+        <h1 class="font-bold text-sm text-gray-100 leading-tight">Annapoorna Poster Studio</h1>
+        <p class="text-[11px] text-gray-400">Click text on poster to edit</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 bg-gray-800/80 border border-white/10 px-2.5 py-1 rounded-md text-xs font-medium text-gray-300">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+      <span>4:5</span>
+      <span class="text-gray-500">|</span>
+      <span>1080 × 1350</span>
+    </div>
   </header>
 
+  <!-- Viewport -->
   <div class="viewport" id="viewport">
     <div id="poster-stage">
       <!-- Border frame -->
@@ -305,7 +339,7 @@
             <p contenteditable="false" class="font-bold Content-cust-a mt-2">ಜ್ಞಾನಮಂದಿರ ಕಟ್ಟಡ ನಿರ್ಮಾಣ
               ಮಾಡುವ</br>ಉದ್ದೇಶದಿಂದ ನಡೆಸಲಾಗುವ ವಾರದ ಶುಕ್ರವಾರ </br>ಮನೆ ಮನೆ ಭಜನೆ</p>
             <p id="change1" contenteditable="true"
-              class="font-semibold bg-orange-800 bg-opacity-50 Content-cust-b rounded-md px-3 py-1 pt-5 inline-block">
+              class="font-semibold bg-orange-800 bg-opacity-50 Content-cust-b rounded-md px-3 py-2 pt-2 inline-block">
               [5ನೇ ವರ್ಷದ 190ನೇ ಹರಿ ಸಂಕೀರ್ತನೆ] 11-07-2025</p>
             <p class="font-bold Content-cust-c pt-4"><span contenteditable="true"> ಶುಕ್ರವಾರ ಸಂಜೆ </span><span id="change4"
                 contenteditable="true">7.00</span>ಕ್ಕೆ ಸರಿಯಾಗಿ</p>
@@ -325,6 +359,7 @@
       </div>
     </div>
 
+    <!-- Your Original Scanning Overlay HTML -->
     <div id="scanningOverlay" class="scanning-overlay">
       <div>
         <img src="https://saliantech.github.io/Saliantech/Files/resources/loading.gif" alt="Logo" class="logo"/>
@@ -333,49 +368,87 @@
     </div>
   </div>
 
+  <!-- Bottom Action Bar -->
   <div class="bottom-bar">
     <button id="font-modal-button"
-      class="flex items-center gap-2 px-5 py-3 text-lg font-medium text-slate-200 bg-slate-700 rounded-xl hover:bg-slate-600 transition active:scale-95"
+      class="flex items-center gap-2 mb-[15%] px-5 py-2.5 text-sm font-semibold text-gray-200 bg-gray-800 hover:bg-gray-700 border border-white/10 rounded-xl transition duration-150 active:scale-95"
       aria-label="Font Selection">
-      <i class="fa-solid fa-font"></i>
+      <i class="fa-solid fa-font text-amber-400"></i>
+      <span>Change Font</span>
     </button>
 
     <button id="download-button"
-      class="flex items-center gap-2 px-6 py-3 text-lg font-bold text-white bg-sky-500 rounded-xl hover:bg-sky-600 shadow-lg shadow-sky-500/30 transition active:scale-95"
-      aria-label="Download Image">
-      <i class="fa-solid fa-download"></i>
-    </button>
-
-    <!-- System Share Button -->
-    <button id="share-button"
-      class="flex items-center gap-2 px-5 py-3 text-lg font-bold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-600/30 transition active:scale-95"
-      aria-label="Share Image">
-      <i class="fa-solid fa-share-nodes"></i>
+      class="flex items-center mb-[15%] gap-2 px-6 py-2.5 text-sm font-bold text-white bg-sky-500 hover:bg-sky-600 rounded-xl shadow-lg shadow-sky-500/20 border border-sky-400/30 transition duration-150 active:scale-95"
+      aria-label="Export Image">
+      <i class="fa-solid fa-file-export"></i>
+      <span>Export</span>
     </button>
   </div>
 
   <!-- Font Selector Modal -->
-  <div id="font-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-    <div class="bg-gray-800 border border-gray-700 p-6 rounded-2xl shadow-2xl w-full max-w-sm">
-      <h3 class="text-lg font-bold mb-4 text-gray-100">ಫಾಂಟ್ ಆಯ್ಕೆಮಾಡಿ (Font)</h3>
+  <div id="font-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="bg-gray-900 border border-white/10 p-5 rounded-2xl shadow-2xl w-full max-w-sm">
+      <div class="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
+        <h3 class="text-base font-bold text-gray-100">Select Font</h3>
+        <button id="close-modal-button" class="text-gray-400 hover:text-white p-1 rounded-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
       <div class="space-y-2">
         <button data-font="'Noto Sans Kannada', sans-serif"
-          class="font-option w-full text-left p-3 rounded-lg bg-gray-700/60 hover:bg-gray-700 text-gray-200"
-          style="font-family: 'Noto Sans Kannada', sans-serif;">Noto Sans Kannada</button>
+          class="font-option w-full text-left px-4 py-3 rounded-xl bg-gray-800/80 hover:bg-gray-800 border border-white/5 hover:border-amber-400/40 text-gray-200 transition"
+          style="font-family: 'Noto Sans Kannada', sans-serif;">
+          Noto Sans Kannada
+        </button>
         <button data-font="'Tiro Kannada', serif"
-          class="font-option w-full text-left p-3 rounded-lg bg-gray-700/60 hover:bg-gray-700 text-gray-200"
-          style="font-family: 'Tiro Kannada', serif;">Tiro Kannada</button>
+          class="font-option w-full text-left px-4 py-3 rounded-xl bg-gray-800/80 hover:bg-gray-800 border border-white/5 hover:border-amber-400/40 text-gray-200 transition"
+          style="font-family: 'Tiro Kannada', serif;">
+          Tiro Kannada
+        </button>
         <button data-font="'Baloo Tamma 2', cursive"
-          class="font-option w-full text-left p-3 rounded-lg bg-gray-700/60 hover:bg-gray-700 text-gray-200"
-          style="font-family: 'Baloo Tamma 2', cursive;">Baloo Tamma 2</button>
+          class="font-option w-full text-left px-4 py-3 rounded-xl bg-gray-800/80 hover:bg-gray-800 border border-white/5 hover:border-amber-400/40 text-gray-200 transition"
+          style="font-family: 'Baloo Tamma 2', cursive;">
+          Baloo Tamma 2
+        </button>
         <button data-font="'Mallanna', sans-serif"
-          class="font-option w-full text-left p-3 rounded-lg bg-gray-700/60 hover:bg-gray-700 text-gray-200"
-          style="font-family: 'Mallanna', sans-serif;">Mallanna</button>
+          class="font-option w-full text-left px-4 py-3 rounded-xl bg-gray-800/80 hover:bg-gray-800 border border-white/5 hover:border-amber-400/40 text-gray-200 transition"
+          style="font-family: 'Mallanna', sans-serif;">
+          Mallanna
+        </button>
       </div>
-      <button id="close-modal-button"
-        class="mt-5 w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-4 rounded-xl transition">
-        Close
-      </button>
+    </div>
+  </div>
+
+  <!-- Preview Modal -->
+  <div id="preview-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="bg-gray-900 border border-white/10 p-5 rounded-2xl shadow-2xl w-full max-w-sm flex flex-col items-center">
+      <div class="w-full flex items-center justify-between mb-3">
+        <h3 class="text-sm font-bold text-gray-200">Poster Preview</h3>
+        <button id="cancel-preview-btn" class="text-gray-400 hover:text-white p-1">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+      
+      <!-- Rendered Image -->
+      <div class="w-full max-h-[58vh] overflow-hidden rounded-xl border border-white/10 bg-black/50 flex items-center justify-center mb-4">
+        <img id="preview-img" src="" alt="Rendered Preview" class="w-full h-auto max-h-[58vh] object-contain select-none pointer-events-none" />
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-2.5 w-full">
+        <button id="share-btn"
+          class="flex-1 py-2.5 px-3 rounded-xl bg-gray-800 hover:bg-gray-700 border border-white/10 text-white font-semibold text-sm flex items-center justify-center gap-2 transition active:scale-95">
+          <i class="fa-solid fa-share-nodes text-emerald-400"></i>
+          <span>Share</span>
+        </button>
+
+        <button id="confirm-download-btn"
+          class="flex-1 py-2.5 px-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-sky-500/25 transition active:scale-95">
+          <i class="fa-solid fa-download"></i>
+          <span>Download</span>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -400,12 +473,19 @@
 
     // Modal controls
     const fontModalButton = document.getElementById('font-modal-button');
-    const downloadButton = document.getElementById('download-button');
-    const shareButton = document.getElementById('share-button');
+    const exportButton = document.getElementById('download-button');
     const fontModal = document.getElementById('font-modal');
     const closeModalButton = document.getElementById('close-modal-button');
     const fontOptions = document.querySelectorAll('.font-option');
     const scanningOverlay = document.getElementById('scanningOverlay');
+
+    // Preview Modal elements
+    const previewModal = document.getElementById('preview-modal');
+    const previewImg = document.getElementById('preview-img');
+    const cancelPreviewBtn = document.getElementById('cancel-preview-btn');
+    const confirmDownloadBtn = document.getElementById('confirm-download-btn');
+    const shareBtn = document.getElementById('share-btn');
+    let renderedDataUrl = null;
 
     fontModalButton.addEventListener('click', () => {
       fontModal.classList.remove('hidden');
@@ -468,7 +548,7 @@
       }
     });
 
-    // Capture Helper: Forces 0,0 top-left origin to eliminate flex-centering shifts
+    // Capture Helper
     async function captureStage(format = 'jpeg') {
       const originalTransform = stage.style.transform;
       const originalPosition = stage.style.position;
@@ -508,104 +588,132 @@
       }
     }
 
-    // Download Handler
-    downloadButton.addEventListener('click', async () => {
+    async function dataUrlToFile(dataUrl, fileName) {
+      const res = await fetch(dataUrl);
+      const blob = await res.blob();
+      return new File([blob], fileName, { type: 'image/png' });
+    }
+
+    // Export handler
+    exportButton.addEventListener('click', async () => {
       scanningOverlay.classList.add('active');
-      downloadButton.disabled = true;
+      exportButton.disabled = true;
+      const originalExportHTML = exportButton.innerHTML;
+      exportButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Exporting...</span>';
 
       try {
-        const dataUrl = await captureStage('jpeg');
-
-        const link = document.createElement('a');
-        link.download = `Annapoorna_${Date.now()}.jpg`;
-        link.href = dataUrl;
-        link.click();
+        renderedDataUrl = await captureStage('png');
+        previewImg.src = renderedDataUrl;
+        previewModal.classList.remove('hidden');
+        previewModal.classList.add('flex');
       } catch (err) {
-        console.error('Download error:', err);
-        alert('Download failed. Ensure assets are accessible.');
+        console.error('Render error:', err);
+        alert('Export preview failed. Please check your image assets.');
       } finally {
         scanningOverlay.classList.remove('active');
-        downloadButton.disabled = false;
+        exportButton.disabled = false;
+        exportButton.innerHTML = originalExportHTML;
       }
     });
 
-    // Fast Stage Capture to Blob or DataURL
-    async function captureStage(format = 'jpeg', asBlob = false) {
-      const originalTransform = stage.style.transform;
-      const originalPosition = stage.style.position;
-      const originalLeft = stage.style.left;
-      const originalTop = stage.style.top;
-      const originalMargin = stage.style.margin;
-
-      try {
-        stage.style.position = 'fixed';
-        stage.style.left = '0px';
-        stage.style.top = '0px';
-        stage.style.margin = '0px';
-        stage.style.transform = 'none';
-
-        const options = {
-          quality: 0.95,
-          cacheBust: false,
-          width: STAGE_WIDTH,
-          height: STAGE_HEIGHT,
-          pixelRatio: 1
-        };
-
-        if (asBlob) {
-          return await htmlToImage.toBlob(stage, options);
-        }
-        return format === 'png' 
-          ? await htmlToImage.toPng(stage, options) 
-          : await htmlToImage.toJpeg(stage, options);
-      } finally {
-        stage.style.position = originalPosition;
-        stage.style.left = originalLeft;
-        stage.style.top = originalTop;
-        stage.style.margin = originalMargin;
-        stage.style.transform = originalTransform;
-      }
+    function closePreview() {
+      previewModal.classList.add('hidden');
+      previewModal.classList.remove('flex');
+      previewImg.src = '';
+      renderedDataUrl = null;
     }
 
-    // Direct System Share Handler
-    shareButton.addEventListener('click', async () => {
-      // 1. Verify basic Share API availability
-      if (!navigator.share) {
-        alert("Web Share is not supported on this browser or requires an HTTPS connection.");
-        return;
-      }
+    cancelPreviewBtn.addEventListener('click', closePreview);
 
-      scanningOverlay.classList.add('active');
-      shareButton.disabled = true;
+    previewModal.addEventListener('click', (e) => {
+      if (e.target === previewModal) {
+        closePreview();
+      }
+    });
+
+    // Share Handler
+    shareBtn.addEventListener('click', async () => {
+      if (!renderedDataUrl) return;
+
+      const originalShareHTML = shareBtn.innerHTML;
+      shareBtn.disabled = true;
+      shareBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
 
       try {
-        // 2. Generate blob directly without base64 conversions
-        const blob = await captureStage('png', true);
-        if (!blob) throw new Error("Stage rendering produced an empty image.");
+        const fileName = `Annapoorna_${Date.now()}.png`;
+        const file = await dataUrlToFile(renderedDataUrl, fileName);
 
-        const file = new File([blob], `Annapoorna_${Date.now()}.png`, { type: 'image/png' });
-
-        // 3. Check file share support
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           await navigator.share({
             files: [file],
-            title: 'ಅನ್ನಪೂರ್ಣ ಭಜನೆ',
-            text: 'ಅನ್ನಪೂರ್ಣ ಆಶೀರ್ವಾದ ಸೇವಾ ಸಮಿತಿ'
+            title: 'Annapoorna Poster',
+            text: 'Annapoorna Bhajana Poster'
+          });
+        } else if (navigator.share) {
+          await navigator.share({
+            title: 'Annapoorna Poster',
+            url: window.location.href
           });
         } else {
-          alert("Your device does not allow direct image sharing from this browser.");
+          alert('Web Share is not supported on this browser. Please download the poster directly.');
         }
       } catch (err) {
         if (err.name !== 'AbortError') {
           console.error('Share error:', err);
-          alert(`Share failed: ${err.message || err.name}`);
         }
       } finally {
-        scanningOverlay.classList.remove('active');
-        shareButton.disabled = false;
+        shareBtn.disabled = false;
+        shareBtn.innerHTML = originalShareHTML;
       }
     });
 
+    // Download Handler
+    confirmDownloadBtn.addEventListener('click', async () => {
+      if (!renderedDataUrl) return;
+
+      const originalBtnHTML = confirmDownloadBtn.innerHTML;
+      confirmDownloadBtn.disabled = true;
+      shareBtn.disabled = true;
+      cancelPreviewBtn.disabled = true;
+
+      const filename = `Annapoorna_${Date.now()}.png`;
+
+      try {
+        const response = await fetch(renderedDataUrl);
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.style.display = 'none';
+        link.download = filename;
+        link.href = blobUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 15000);
+
+        for (let remaining = 10; remaining > 0; remaining--) {
+          confirmDownloadBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Downloading (${remaining}s)...</span>`;
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+
+        confirmDownloadBtn.className = 'flex-1 py-2.5 px-3 rounded-xl bg-emerald-600 text-white font-bold text-sm flex items-center justify-center gap-2 transition';
+        confirmDownloadBtn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Completed!</span>';
+        await new Promise((resolve) => setTimeout(resolve, 700));
+
+        closePreview();
+      } catch (err) {
+        console.error('Download error:', err);
+        alert('Failed to download the image.');
+      } finally {
+        confirmDownloadBtn.disabled = false;
+        shareBtn.disabled = false;
+        cancelPreviewBtn.disabled = false;
+        confirmDownloadBtn.className = 'flex-1 py-2.5 px-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-sky-500/25 transition active:scale-95';
+        confirmDownloadBtn.innerHTML = originalBtnHTML;
+      }
+    });
   </script>
 </body>
 
