@@ -6,7 +6,7 @@
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="color-scheme" content="dark">
-  <title>Annapoorna Poster Editor</title>
+  <title>Annapoorna Poster</title>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -275,15 +275,13 @@
         <i class="fa-solid fa-layer-group text-sm"></i>
       </div>
       <div>
-        <h1 class="font-bold text-sm text-gray-100 leading-tight">Annapoorna Poster Studio</h1>
+        <h1 class="font-bold text-sm text-gray-100 leading-tight">Annapoorna Poster</h1>
         <p class="text-[11px] text-gray-400">Click text on poster to edit</p>
       </div>
     </div>
     <div class="flex items-center gap-2 bg-gray-800/80 border border-white/10 px-2.5 py-1 rounded-md text-xs font-medium text-gray-300">
       <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-      <span>4:5</span>
-      <span class="text-gray-500">|</span>
-      <span>1080 × 1350</span>
+      <span id="userid"></span>
     </div>
   </header>
 
@@ -714,7 +712,12 @@
         confirmDownloadBtn.innerHTML = originalBtnHTML;
       }
     });
+
   </script>
+<script>
+  document.getElementById("userid").textContent =
+    localStorage.getItem("ssc_app_user_id") || "";
+</script>
 </body>
 
 </html>
