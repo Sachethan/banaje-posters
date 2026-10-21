@@ -74,6 +74,10 @@
   // Read the actual stored version (fallback to 'unknown' if not yet fetched)
   const appVersion = localStorage.getItem("ssc_app_version") || "unknown";
   const pageStatus = window.location.pathname.endsWith("index-beta.html") ? "Beta" : "";    
+  const pageMode = window.matchMedia('(display-mode: standalone)').matches
+    || window.navigator.standalone === true
+    ? 'pwa'
+    : 'browser';
       
   const payload = {
     spreadsheetId: TELEMETRY_SPREADSHEET_ID,
@@ -82,7 +86,7 @@
     time: time,
     screen: screenRes,
     platform: navigator.platform || "Unknown",
-    userAgent: `${appVersion}/${pageStatus}/${navigator.userAgent}`
+    userAgent: `${appVersion}/${pageStatus}/${pageMode}/${navigator.userAgent}`
   };
 
     console.group("Telemetry Tracker");
