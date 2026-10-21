@@ -529,60 +529,76 @@
       }
     });
 
-    // Native System Share Handler with Automatic Fallback
+    // Fast Stage Capture to Blob or DataURL
+    async function captureStage(format = 'jpeg', asBlob = false) {
+      const originalTransform = stage.style.transform;
+      const originalPosition = stage.style.position;
+      const originalLeft = stage.style.left;
+      const originalTop = stage.style.top;
+      const originalMargin = stage.style.margin;
+
+      try {
+        stage.style.position = 'fixed';
+        stage.style.left = '0px';
+        stage.style.top = '0px';
+        stage.style.margin = '0px';
+        stage.style.transform = 'none';
+
+        const options = {
+          quality: 0.95,
+          cacheBust: false,
+          width: STAGE_WIDTH,
+          height: STAGE_HEIGHT,
+          pixelRatio: 1
+        };
+
+        if (asBlob) {
+          return await htmlToImage.toBlob(stage, options);
+        }
+        return format === 'png' 
+          ? await htmlToImage.toPng(stage, options) 
+          : await htmlToImage.toJpeg(stage, options);
+      } finally {
+        stage.style.position = originalPosition;
+        stage.style.left = originalLeft;
+        stage.style.top = originalTop;
+        stage.style.margin = originalMargin;
+        stage.style.transform = originalTransform;
+      }
+    }
+
+    // Direct System Share Handler
     shareButton.addEventListener('click', async () => {
+      // 1. Verify basic Share API availability
+      if (!navigator.share) {
+        alert("Web Share is not supported on this browser or requires an HTTPS connection.");
+        return;
+      }
+
       scanningOverlay.classList.add('active');
       shareButton.disabled = true;
 
       try {
-        const dataUrl = await captureStage('png');
+        // 2. Generate blob directly without base64 conversions
+        const blob = await captureStage('png', true);
+        if (!blob) throw new Error("Stage rendering produced an empty image.");
 
-        // Convert base64 dataUrl to Blob without extra fetch delays
-        const arr = dataUrl.split(',');
-        const mime = arr[0].match(/:(.*?);/)[1];
-        const bstr = atob(arr[1]);
-        let n = bstr.length;
-        const u8arr = new Uint8Array(n);
-        while (n--) {
-          u8arr[n] = bstr.charCodeAt(n);
-        }
-        const blob = new Blob([u8arr], { type: mime });
-        const fileName = `Annapoorna_${Date.now()}.png`;
-        const file = new File([blob], fileName, { type: 'image/png' });
+        const file = new File([blob], `Annapoorna_${Date.now()}.png`, { type: 'image/png' });
 
-        // Check if Web Share API and file sharing are actually supported
-        const canShareFiles = navigator.canShare && navigator.canShare({ files: [file] });
-
-        if (canShareFiles) {
+        // 3. Check file share support
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
           await navigator.share({
             files: [file],
-            title: 'ಅನ್ನಪೂರ್ಣ ಭಜನೆ'
+            title: 'ಅನ್ನಪೂರ್ಣ ಭಜನೆ',
+            text: 'ಅನ್ನಪೂರ್ಣ ಆಶೀರ್ವಾದ ಸೇವಾ ಸಮಿತಿ'
           });
         } else {
-          // Fallback: If not on HTTPS or browser doesn't support file sharing, auto-download
-          const link = document.createElement('a');
-          link.download = fileName;
-          link.href = dataUrl;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
+          alert("Your device does not allow direct image sharing from this browser.");
         }
       } catch (err) {
-        // User swiped away or cancelled the share sheet
-        if (err.name === 'AbortError') {
-          console.log('Share was cancelled by user.');
-        } else {
-          console.warn('Share error, downloading instead:', err);
-          // If native share still failed (e.g. security block), trigger download
-          try {
-            const dataUrl = await captureStage('png');
-            const link = document.createElement('a');
-            link.download = `Annapoorna_${Date.now()}.png`;
-            link.href = dataUrl;
-            link.click();
-          } catch (e) {
-            alert('Unable to process image. Please try the Download button.');
-          }
+        if (err.name !== 'AbortError') {
+          console.error('Share error:', err);
+          alert(`Share failed: ${err.message || err.name}`);
         }
       } finally {
         scanningOverlay.classList.remove('active');
