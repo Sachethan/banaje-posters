@@ -7,11 +7,10 @@
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="color-scheme" content="dark light">
   <title>ಅನ್ನಪೂರ್ಣ Poster Editor</title>
-  <!-- <base href="https://sachethan.github.io/banaje-posters/beta/annapoorna/"> -->
+  <base href="https://sachethan.github.io/banaje-posters/beta/annapoorna/">
   <!-- Tailwind CSS & Font Awesome -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
-  <link rel="stylesheet" href="style.css" />
   <!-- Google Fonts -->
   <link
     href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@400;700;900&family=Tiro+Kannada&family=Baloo+Tamma+2&family=Mallanna&display=swap"
@@ -33,9 +32,9 @@
     }
 
     html, body {
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-}
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
 
     body {
       font-family: 'Noto Sans Kannada', sans-serif;
@@ -133,166 +132,118 @@
     }
 
     .Header-cust-img {
-  margin-top: 50px;
-}
+      margin-top: 50px;
+    }
 
-.title-cust {
-  font-size: 40px;
-  margin: 0 5px 0 5px;
-}
+    .title-cust {
+      font-size: 40px;
+      margin: 0 5px 0 5px;
+    }
 
-.Content-cust-a {
-  font-size: 35px;
-}
+    .Content-cust-a {
+      font-size: 35px;
+    }
 
-.Content-cust-b {
-  font-size: 30px;
-}
+    .Content-cust-b {
+      font-size: 30px;
+    }
 
-.Content-cust-c {
-  font-size: 35px;
-  padding-top: 5px;
-}
+    .Content-cust-c {
+      font-size: 35px;
+      padding-top: 5px;
+    }
 
-.Content-cust-d {
-  font-size: 35px;
-  margin-bottom: 5px;
-}
+    .Content-cust-d {
+      font-size: 35px;
+      margin-bottom: 5px;
+    }
 
-.last-line {
-  bottom: -100px;
-}
+    .last-line {
+      bottom: -100px;
+    }
 
-.line-divider {
-  width: 100%;
-  height: 50px;
-  /* Adjust height to match your line's design */
+    .line-divider {
+      width: 100%;
+      height: 60px;
+      background-color: #fcfcfc;
+      -webkit-mask-image: url('image/last_line.png');
+      mask-image: url('image/last_line.png');
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-position: center;
+      -webkit-mask-size: cover;
+      mask-size: cover;
+    }
 
-  /* Set your desired color here: */
-  background-color: #fcfcfc;
-  /* Red / Gold / White / etc. */
+    @keyframes scan-animation {
+      0% {
+        background-position: 0 -200%, 0 0;
+      }
+      100% {
+        background-position: 0 200%, 0 100%;
+      }
+    }
 
-  /* Mask it with your PNG */
-  -webkit-mask-image: url('image/last_line.png');
-  mask-image: url('image/last_line.png');
+    .scanning-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: linear-gradient(180deg, transparent,
+          rgba(100, 180, 255, 0.3),
+          rgba(100, 180, 255, 0.6),
+          rgba(100, 180, 255, 0.3),
+          transparent),
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.9) 1px, transparent 2px);
+      background-size: 100% 200%, 60px 60px;
+      background-repeat: no-repeat, repeat;
+      animation: scan-animation 2s infinite linear;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
 
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
+    .scanning-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
 
-  -webkit-mask-position: center;
-  mask-position: center;
+    .scanning-overlay div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
 
-  -webkit-mask-size: cover;
-  /* or contain */
-  mask-size: cover;
-}
-        @keyframes scan-animation {
-            0% {
-                background-position: 0 -200%, 0 0; /* Initial position for scan line (top) and stars */
-            }
-            100% {
-                background-position: 0 200%, 0 100%; /* Final position for scan line (bottom) and stars */
-            }
-        }
+    img.logo {
+      width: 75px;
+      height: auto;
+      z-index: 1000;
+      filter: invert(100%);
+    }
 
-.scanning-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-  /* Layer 1: Professional blue scan line (top-to-bottom) */
-  background-image: linear-gradient(180deg, transparent,
-      rgba(100, 180, 255, 0.3),
-      /* Light blue with transparency */
-      rgba(100, 180, 255, 0.6),
-      /* Slightly darker blue with transparency */
-      rgba(100, 180, 255, 0.3),
-      transparent),
-    /* Layer 2: Stars - small white radial gradients repeated */
-    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.9) 1px, transparent 2px);
+    .scanning-overlay span {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      border: 4px solid transparent;
+      border-top: 4px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      z-index: 1000;
+    }
 
-  background-size: 100% 200%, 60px 60px;
-  /* Scan line size (100% width, 200% height for vertical sweep), Star pattern size (60x60px grid) */
-  background-repeat: no-repeat, repeat;
-  /* Scan line doesnt repeat, stars repeat to fill */
-  animation: scan-animation 2s infinite linear;
-  /* Adjust duration as needed */
-  pointer-events: none;
-  /* Allows clicks to pass through to elements below */
-  opacity: 0;
-  /* Hidden by default */
-  transition: opacity 0.3s ease-in-out;
-}
-
-.scanning-overlay.active {
-  opacity: 1;
-}
-
-.scanning-overlay {
-
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-}
-
-.scanning-overlay div {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-
-
-img.logo {
-  width: 75px;
-  /* Adjust the size of your logo */
-  height: auto;
-  z-index: 1000;
-  filter: invert(100%);
-}
-
-.scanning-overlay span {
-  position: absolute;
-  width: 80px;
-  height: 80px;
-  border: 4px solid transparent;
-  border-top: 4px solid white;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  z-index: 1000;
-}
-
-/* Animation for the spinner */
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* Animation: Smooth Zoom In for the centered modal */
-@keyframes zoom-in {
-  0% {
-    transform: translate(-50%, -50%) scale(0.8);
-    opacity: 0;
-  }
-
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-  }
-}
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 
@@ -325,7 +276,6 @@ img.logo {
           <p contenteditable="false" class="m-[0px]">||ಶ್ರೀ ಗುರುಭ್ಯೋ ನಮಃ || ಶ್ರೀ ಶರಭೇಶ್ವರಾಯ ನಮಃ ||</p>
           <p contenteditable="false">|| ಶ್ರೀ ಅಂಬಿಕಾ ಅನ್ನಪೂರ್ಣೇಶ್ವರಿ ನಮಃ ||</p>
 
-
           <!-- Image -->
           <div class="absolute Header-cust-img z-50">
             <img src="image/devi.jpeg"
@@ -333,6 +283,7 @@ img.logo {
               alt="Error" onerror="this.onerror=null;this.src='https://placehold.co/100x100/000000/FFFFFF?text=Error';">
           </div>
         </div>
+
         <!-- Title -->
         <div
           class="relative mt-[160px] w-fit px-[100px] pt-2 bg-gradient-to-b from-orange-500 to-orange-600 rounded-[40px] shadow-xl border-[6px] border-orange-400">
@@ -346,6 +297,7 @@ img.logo {
             ಆಶೀರ್ವಾದ ಸೇವಾ ಸಮಿತಿ</h1>
           <p contenteditable="false" class="relative font-semibold m-0 p-0 text-[35px] text-white">ಇದರ ವತಿಯಿಂದ</p>
         </div>
+
         <!-- Content -->
         <div
           class="relative bg-black Content-cust border-[4px] border-white backdrop-blur-[1px] bg-opacity-20 rounded-[40px] p-2 mt-4 md:p-4 w-11/12 flex flex-col justify-center items-center text-yellow-50 shadow-inner-lg">
@@ -362,16 +314,10 @@ img.logo {
                 ಹೆಸರು ಮತ್ತು ಮಕ್ಕಳು</p>
             </div>
           </div>
-          <div
-            class="absolute last-line place-self-center w-[90%] flex justify-center">
+          <div class="absolute last-line place-self-center w-[90%] flex justify-center">
             <div class="line-divider"></div>
           </div>
         </div>
-
-        <!-- Footer 
-          <div class="absolute text-footer font-semibold text-yellow-100 opacity-90">
-            <p contenteditable="false" class="bg-orange-800 rounded-md px-3 py-1 pt-2 footer-text"> </p>
-          </div>-->
       </div>
 
       <div class="absolute bottom-0 w-full garland-wrapper">
@@ -383,24 +329,28 @@ img.logo {
       <div>
         <img src="https://saliantech.github.io/Saliantech/Files/resources/loading.gif" alt="Logo" class="logo"/>
         <span></span>
-    </div>
+      </div>
     </div>
   </div>
 
   <div class="bottom-bar">
     <button id="font-modal-button"
-      class="flex items-center gap-2 px-5 py-3 text-lg font-medium text-slate-200 bg-slate-700 rounded-xl hover:bg-slate-600 transition active:scale-95">
+      class="flex items-center gap-2 px-5 py-3 text-lg font-medium text-slate-200 bg-slate-700 rounded-xl hover:bg-slate-600 transition active:scale-95"
+      aria-label="Font Selection">
       <i class="fa-solid fa-font"></i>
     </button>
 
     <button id="download-button"
-      class="flex items-center gap-2 px-6 py-3 text-lg font-bold text-white bg-sky-500 rounded-xl hover:bg-sky-600 shadow-lg shadow-sky-500/30 transition active:scale-95">
+      class="flex items-center gap-2 px-6 py-3 text-lg font-bold text-white bg-sky-500 rounded-xl hover:bg-sky-600 shadow-lg shadow-sky-500/30 transition active:scale-95"
+      aria-label="Download Image">
       <i class="fa-solid fa-download"></i>
     </button>
 
-    <button id="whatsapp-button"
-      class="flex items-center gap-2 px-5 py-3 text-lg font-bold text-white bg-green-500 rounded-xl hover:bg-green-600 shadow-lg shadow-green-500/30 transition active:scale-95">
-      <i class="fa-brands fa-whatsapp"></i>
+    <!-- System Share Button -->
+    <button id="share-button"
+      class="flex items-center gap-2 px-5 py-3 text-lg font-bold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-600/30 transition active:scale-95"
+      aria-label="Share Image">
+      <i class="fa-solid fa-share-nodes"></i>
     </button>
   </div>
 
@@ -451,7 +401,7 @@ img.logo {
     // Modal controls
     const fontModalButton = document.getElementById('font-modal-button');
     const downloadButton = document.getElementById('download-button');
-    const whatsappButton = document.getElementById('whatsapp-button');
+    const shareButton = document.getElementById('share-button');
     const fontModal = document.getElementById('font-modal');
     const closeModalButton = document.getElementById('close-modal-button');
     const fontOptions = document.querySelectorAll('.font-option');
@@ -527,7 +477,6 @@ img.logo {
       const originalMargin = stage.style.margin;
 
       try {
-        // Temporarily pin strictly to screen origin at native dimensions
         stage.style.position = 'fixed';
         stage.style.left = '0px';
         stage.style.top = '0px';
@@ -551,7 +500,6 @@ img.logo {
           return await htmlToImage.toJpeg(stage, options);
         }
       } finally {
-        // Restore scaling and centered layout
         stage.style.position = originalPosition;
         stage.style.left = originalLeft;
         stage.style.top = originalTop;
@@ -581,33 +529,67 @@ img.logo {
       }
     });
 
-    // WhatsApp Share Handler
-    whatsappButton.addEventListener('click', async () => {
+    // Native System Share Handler with Automatic Fallback
+    shareButton.addEventListener('click', async () => {
       scanningOverlay.classList.add('active');
-      whatsappButton.disabled = true;
+      shareButton.disabled = true;
 
       try {
         const dataUrl = await captureStage('png');
-        const res = await fetch(dataUrl);
-        const blob = await res.blob();
 
-        if (navigator.clipboard && window.ClipboardItem) {
-          await navigator.clipboard.write([
-            new ClipboardItem({ 'image/png': blob })
-          ]);
-          alert('📌 Image copied to clipboard!\nOpen WhatsApp and paste in chat.');
-          window.location.href = 'whatsapp://send?text=' + encodeURIComponent('🙏');
+        // Convert base64 dataUrl to Blob without extra fetch delays
+        const arr = dataUrl.split(',');
+        const mime = arr[0].match(/:(.*?);/)[1];
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
+        }
+        const blob = new Blob([u8arr], { type: mime });
+        const fileName = `Annapoorna_${Date.now()}.png`;
+        const file = new File([blob], fileName, { type: 'image/png' });
+
+        // Check if Web Share API and file sharing are actually supported
+        const canShareFiles = navigator.canShare && navigator.canShare({ files: [file] });
+
+        if (canShareFiles) {
+          await navigator.share({
+            files: [file],
+            title: 'ಅನ್ನಪೂರ್ಣ ಭಜನೆ'
+          });
         } else {
-          throw new Error('ClipboardItem API not supported');
+          // Fallback: If not on HTTPS or browser doesn't support file sharing, auto-download
+          const link = document.createElement('a');
+          link.download = fileName;
+          link.href = dataUrl;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
         }
       } catch (err) {
-        console.warn('Share error:', err);
-        alert('Direct clipboard copy is not supported in this browser. Please use the Download button.');
+        // User swiped away or cancelled the share sheet
+        if (err.name === 'AbortError') {
+          console.log('Share was cancelled by user.');
+        } else {
+          console.warn('Share error, downloading instead:', err);
+          // If native share still failed (e.g. security block), trigger download
+          try {
+            const dataUrl = await captureStage('png');
+            const link = document.createElement('a');
+            link.download = `Annapoorna_${Date.now()}.png`;
+            link.href = dataUrl;
+            link.click();
+          } catch (e) {
+            alert('Unable to process image. Please try the Download button.');
+          }
+        }
       } finally {
         scanningOverlay.classList.remove('active');
-        whatsappButton.disabled = false;
+        shareButton.disabled = false;
       }
     });
+
   </script>
 </body>
 
