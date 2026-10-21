@@ -65,21 +65,25 @@
   }
 
   function sendTelemetry(userId) {
-    const idEl = document.getElementById("display-user-id");
-    if (idEl) idEl.textContent = userId;
+  const idEl = document.getElementById("display-user-id");
+  if (idEl) idEl.textContent = userId;
 
-    const { date, time } = getFormattedDateTime();
-    const screenRes = `${window.screen.width}x${window.screen.height}`;
-
-    const payload = {
-      spreadsheetId: TELEMETRY_SPREADSHEET_ID,
-      userId: userId,
-      date: date,
-      time: time,
-      screen: screenRes,
-      platform: navigator.platform || "Unknown",
-      userAgent: navigator.userAgent
-    };
+  const { date, time } = getFormattedDateTime();
+  const screenRes = `${window.screen.width}x${window.screen.height}`;
+  
+  // Read the actual stored version (fallback to 'unknown' if not yet fetched)
+  const appVersion = localStorage.getItem("ssc_app_version") || "unknown";
+  const pageStatus = window.location.pathname.endsWith("index-beta.html") ? "Beta" : "";    
+      
+  const payload = {
+    spreadsheetId: TELEMETRY_SPREADSHEET_ID,
+    userId: userId,
+    date: date,
+    time: time,
+    screen: screenRes,
+    platform: navigator.platform || "Unknown",
+    userAgent: `${appVersion}/${pageStatus}/${navigator.userAgent}`
+  };
 
     console.group("Telemetry Tracker");
     console.log("User ID:", payload.userId);

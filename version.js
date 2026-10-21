@@ -1,3 +1,7 @@
+if (window.location.pathname.endsWith("index-beta.html")) {
+    document.getElementById("beta")?.classList.remove("hidden");
+  }
+
 (function() {
   const VERSION_SPREADSHEET_ID = "1mk6GCR7vm26YmegLsu1nLU0MDmvL8kJV6c7SpmrQmYc";
   const VERSION_SHEET_NAME = "Version";
@@ -68,7 +72,7 @@
 
   async function fetchRemoteVersion() {
     try {
-      const tqUrl = `https://docs.google.com/spreadsheets/d/${VERSION_SPREADSHEET_ID}/gviz/tq?sheet=${encodeURIComponent(VERSION_SHEET_NAME)}&range=A1&tqx=out:json&_t=${Date.now()}`;
+      const tqUrl = `https://docs.google.com/spreadsheets/d/${VERSION_SPREADSHEET_ID}/gviz/tq?sheet=${encodeURIComponent(VERSION_SHEET_NAME)}&range=B1&tqx=out:json&_t=${Date.now()}`;
       const res = await fetch(tqUrl, { cache: "no-store" });
       if (!res.ok) return null;
       
